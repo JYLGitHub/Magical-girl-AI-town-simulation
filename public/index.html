@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서버를 통한 Claude API 테스트</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .input-section {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .response-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            min-height: 50px;
+        }
+        
+        .loading {
+            color: #007bff;
+            font-style: italic;
+        }
+        
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 서버를 통한 Claude API 테스트</h1>
+        
+        <div class="status success">
+            ✅ 서버 연결됨! 이제 안전하게 Claude API를 사용할 수 있습니다.
+        </div>
+        
+        <div class="input-section">
+            <label for="apiKey">Claude API 키:</label>
+            <input type="password" id="apiKey" placeholder="sk-ant-api03-...로 시작하는 키를 입력하세요">
+        </div>
+        
+        <div class="input-section">
+            <label for="prompt">테스트 메시지:</label>
+            <textarea id="prompt" placeholder="Claude에게 보낼 메시지를 입력하세요.">안녕하세요! 서버를 통한 API 연결이 잘 되었는지 확인해주세요.</textarea>
+        </div>
+        
+        <button onclick="testServerAPI()" id="testBtn">서버를 통해 Claude에게 메시지 보내기</button>
+        
+        <div class="response-section" id="response">
+            서버가 준비되었습니다! API 키를 입력하고 테스트해보세요.
+        </div>
+
+        <hr style="margin: 30px 0;">
+        
+        <h2>🎭 캐릭터 행동 생성 테스트</h2>
+        
+        <div class="input-section">
+            <label for="characterName">캐릭터 이름:</label>
+            <input type="text" id="characterName" value="지은" placeholder="캐릭터 이름">
+        </div>
+        
+        <div class="input-section">
+            <label for="characterRole">캐릭터 역할:</label>
+            <input type="text" id="characterRole" value="대학생" placeholder="예: 대학생, 직장인, 카페 사장">
+        </div>
+        
+        <div class="input-section">
+            <label for="situation">상황 설명:</label>
+            <textarea id="situation" placeholder="현재 상황을 설명해주세요">오전 9시, 카페에 들어가서 공부할 자리를 찾고 있습니다. 카페는 조용하고 아늑한 분위기입니다.</textarea>
+        </div>
+        
+        <button onclick="testCharacterAction()" id="characterBtn">캐릭터 행동 생성하기</button>
+        
+        <div class="response-section" id="characterResponse">
+            캐릭터 정보를 입력하고 테스트해보세요!
+        </div>
+    </div>
+
+    <script>
+        async function testServerAPI() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const prompt = document.getElementById('prompt').value.trim();
+            const responseDiv = document.getElementById('response');
+            const testBtn = document.getElementById('testBtn');
+            
+            if (!apiKey) {
+                responseDiv.innerHTML = '<div class="error">API 키를 입력해주세요!</div>';
+                return;
+            }
+            
+            if (!prompt) {
+                responseDiv.innerHTML = '<div class="error">메시지를 입력해주세요!</div>';
+                return;
+            }
+            
+            testBtn.disabled = true;
+            responseDiv.innerHTML = '<div class="loading">서버를 통해 Claude에게 요청을 보내는 중...</div>';
+            
+            try {
+                const response = await fetch('/api/claude', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        apiKey: apiKey,
+                        prompt: prompt
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || '알 수 없는 오류가 발생했습니다.');
+                }
+                
+                responseDiv.innerHTML = `
+                    <div class="success">
+                        <strong>✅ 서버 API 테스트 성공!</strong><br><br>
+                        <strong>Claude의 응답:</strong><br>
+                        ${data.response.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('서버 API 호출 오류:', error);
+                responseDiv.innerHTML = `
+                    <div class="error">
+                        <strong>❌ 서버 API 호출 실패</strong><br><br>
+                        <strong>오류 내용:</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            } finally {
+                testBtn.disabled = false;
+            }
+        }
+        
+        async function testCharacterAction() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const characterName = document.getElementById('characterName').value.trim();
+            const characterRole = document.getElementById('characterRole').value.trim();
+            const situation = document.getElementById('situation').value.trim();
+            const responseDiv = document.getElementById('characterResponse');
+            const characterBtn = document.getElementById('characterBtn');
+            
+            if (!apiKey) {
+                responseDiv.innerHTML = '<div class="error">먼저 API 키를 입력해주세요!</div>';
+                return;
+            }
+            
+            if (!characterName || !characterRole || !situation) {
+                responseDiv.innerHTML = '<div class="error">모든 필드를 입력해주세요!</div>';
+                return;
+            }
+            
+            characterBtn.disabled = true;
+            responseDiv.innerHTML = '<div class="loading">캐릭터의 행동을 생성하는 중...</div>';
+            
+            try {
+                const character = {
+                    name: characterName,
+                    role: characterRole,
+                    location: '카페',
+                    mood: '평범함',
+                    energy: 80
+                };
+                
+                const response = await fetch('/api/character-action', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        apiKey: apiKey,
+                        character: character,
+                        situation: situation
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || '알 수 없는 오류가 발생했습니다.');
+                }
+                
+                responseDiv.innerHTML = `
+                    <div class="success">
+                        <strong>🎭 캐릭터 행동 생성 성공!</strong><br><br>
+                        <strong>행동:</strong> ${data.action}<br>
+                        ${data.dialogue ? `<strong>대사:</strong> "${data.dialogue}"<br>` : ''}
+                        <strong>생각:</strong> ${data.thoughts}<br>
+                        ${data.mood_change ? `<strong>기분 변화:</strong> ${data.mood_change}<br>` : ''}
+                        <strong>에너지 변화:</strong> ${data.energy_change > 0 ? '+' : ''}${data.energy_change}
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('캐릭터 행동 생성 오류:', error);
+                responseDiv.innerHTML = `
+                    <div class="error">
+                        <strong>❌ 캐릭터 행동 생성 실패</strong><br><br>
+                        <strong>오류 내용:</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            } finally {
+                characterBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

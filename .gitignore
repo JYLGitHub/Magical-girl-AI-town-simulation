@@ -1,0 +1,7 @@
+# .gitignore
+
+# 환경 변수 파일
+.env
+
+# Node.js 의존성 폴더
+node_modules/

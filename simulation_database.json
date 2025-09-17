@@ -1,0 +1,1182 @@
+{
+  "characterDatabase": {
+    "char1": {
+      "id": "char1",
+      "name": "이민지",
+      "role": "대학생",
+      "avatar": "👩‍🎓",
+      "personality": "[성격: 내향적이고 창의적임], [가치관: 안정과 성실함], [관심사: 그림 그리기, 미스터리 소설 읽기], [현재 목표: 다가오는 프로젝트 공모전에서 좋은 성과 내기], [특징: 가끔 엉뚱한 상상을 즐김], [좋아하는 것: 단 디저트, 책 읽기]",
+      "archetype": "student",
+      "location": "집",
+      "status": "취침",
+      "currentAction": "취침 중입니다.",
+      "thoughts": "...",
+      "conversationId": null,
+      "mood": "지침",
+      "energy": 18,
+      "stress": 100,
+      "socialNeed": 99,
+      "journal": [
+        {
+          "timestamp": "2025-09-17T02:32:11.354Z",
+          "description": "이민지와 강준호, 이수영이 환경 보호를 주제로 한 프로젝트 공모전 준비를 위해 구체적인 역할과 계획을 논의하는 대화였다.",
+          "poignancy": 8,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:34:05.142Z",
+          "description": "이민지와 친구들이 프로젝트 회의를 위해 카페 장소를 정하는 과정을 논의하며 각자의 의견을 나누었다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:36:29.203Z",
+          "description": "2일 19:0에 카페에서 '프로젝트 회의' 약속. (참여자: 이민지, 이수영, 강준호)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T02:36:30.635Z",
+          "description": "프로젝트 회의 준비를 위해 카페와 시간을 정하고 각자의 역할을 분담하기로 하였다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:38:29.733Z",
+          "description": "2일 13:0에 회사에서 '최종 점검' 약속. (참여자: 강준호, 이수영, 이민지)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T02:38:31.097Z",
+          "description": "우리 팀은 카페 회의 준비를 위해 각자의 역할을 명확히 하고, 시간 계획을 세워 효율적으로 준비하기로 했다.",
+          "poignancy": 7,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:40:34.208Z",
+          "description": "이민지와 강준호, 이수영은 모모 카페에서 오후 3시에 만나 프로젝트 아이디어를 정리하고 발전 방향에 대해 논의하기로 했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:47:17.611Z",
+          "description": "2일 14:0에 카페 모카에서 '프로젝트의 핵심 문제점과 해결 방안 논의' 약속. (참여자: 강준호, 이수영, 이민지)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T02:47:19.339Z",
+          "description": "내일 오후 2시에 카페 모카에서 프로젝트의 핵심 문제점과 해결 방안을 논의하기로 결정했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:50:12.064Z",
+          "description": "이민지와 친구들이 프로젝트 회의를 위해 카페에서 아이디어를 정리하기로 하며 각자 준비할 자료를 논의했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T03:09:50.044Z",
+          "description": "이민지, 강준호, 이수영 세 친구가 저녁에 함께 요리하고 프로젝트에 대해 이야기하기로 하며 구체적인 메뉴와 재료를 정리하는 대화가 있었다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T03:23:41.604Z",
+          "description": "1일 18:0에 카페에서 '피자 만들기' 약속. (참여자: 이민지, 이수영, 강준호)",
+          "poignancy": 6,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T03:23:43.104Z",
+          "description": "이민지와 친구들은 카페에서 피자 요리를 하며 프로젝트에 대해 논의하기로 결정하고 역할을 분담하기로 했다.",
+          "poignancy": 7,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T03:29:00.555Z",
+          "description": "1일 14:0에 카페에서 '프로젝트 아이디어 구체화 및 자료 점검' 약속. (참여자: 이민지, 이수영, 강준호)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T03:29:01.978Z",
+          "description": "오늘 오후 2시에 프로젝트 아이디어 구체화와 자료 점검을 위해 그린카페에서 만나는 계획을 세웠다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T04:12:52.103Z",
+          "description": "이민지와 강준호는 프로젝트 진행 상황과 C 단계의 지연 문제를 해결하기 위한 구체적인 방안을 논의하였다.",
+          "poignancy": 8,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T04:14:11.966Z",
+          "description": "강준호는 이민지의 스트레스를 이해하고 함께 문제를 해결하려고 도와주려는 의지를 보였다.",
+          "poignancy": 8,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T04:24:56.192Z",
+          "description": "1일 14:0에 카페에서 '프로젝트 진행 상황 논의' 약속. (참여자: 강준호, 이민지, 이수영)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T04:24:57.652Z",
+          "description": "프로젝트 C 단계 지연 문제를 해결하기 위해 강준호 씨와 이수영 씨와의 논의 전에 핵심 문제를 정리하고 대안을 모색하기로 했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T05:29:15.208Z",
+          "description": "1일 14:0에 카페에서 '프로젝트 아이디어 논의 및 자료 준비' 약속. (참여자: 이민지, 강준호)",
+          "poignancy": 9,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T05:29:16.663Z",
+          "description": "강준호와의 프로젝트 논의를 위해 스마트워크 카페에서 만나기로 정하고 준비할 사항을 각자 확인하는 내용의 대화.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T05:30:56.746Z",
+          "description": "이민지와 강준호는 프로젝트를 논의하기 위해 점심 후 카페에서 만나기로 하고, 구체적인 논의 주제와 준비 사항을 정리했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T05:33:05.699Z",
+          "description": "2일 0:0에 카페에서 '커피 한 잔 하면서 이야기 나누기' 약속. (참여자: 이민지, 강준호)",
+          "poignancy": 6,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T05:33:06.843Z",
+          "description": "이민지와 강준호는 내일 프로젝트로 인해 서로의 스트레스를 공유하고 카페에서 이야기를 나누기로 했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T05:34:06.644Z",
+          "description": "이민지가 오늘 힘든 하루를 보냈다는 이야기를 나누며 친구들의 걱정과 배려를 느꼈다.",
+          "poignancy": 7,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T06:02:28.264Z",
+          "description": "2일 19:0에 카페에서 '자료 정리 및 발표 연습' 약속. (참여자: 이민지, 이수영)",
+          "poignancy": 9,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T06:02:31.153Z",
+          "description": "이민지가 발표 준비 때문에 힘든 상황에서 이수영이 도움을 제안하며 함께 준비하기로 약속한 대화。",
+          "poignancy": 8,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T06:03:46.645Z",
+          "description": "A안과 B안을 융합하는 방안에 대해 긍정적인 논의가 이루어졌다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T06:05:47.651Z",
+          "description": "4일 14:0에 회사에서 '다음 회의' 약속. (참여자: 이민지, 이수영)",
+          "poignancy": 9,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T06:05:49.267Z",
+          "description": "A안과 B안의 융합 방안과 발생 가능한 리스크 관리에 대한 구체적인 논의가 이루어졌다.",
+          "poignancy": 8,
+          "type": "conversation"
+        }
+      ],
+      "relationships": {
+        "이수영": {
+          "affection": 141,
+          "trust": 186
+        },
+        "강준호": {
+          "affection": 103,
+          "trust": 158
+        }
+      },
+      "shortTermGoal": null,
+      "dailyPlan": "### 아침\n오늘 아침에는 간단한 아침식사를 하며 미스터리 소설의 한 챕터를 읽고, 프로젝트 공모전을 위한 아이디어 스케치를 해볼 계획이에요.\n\n### 점심\n점심시간에는 친구들과 함께 카페에서 만나 프로젝트 역할 분담에 대해 구체적으로 논의하고, 아이디어를 발전시키는 시간을 가질 예정이에요.\n\n### 저녁\n저녁에는 집에서 그림 그리기를 하며 하루를 마무리하고, 프로젝트를 위한 자료 정리를 하면서 안정적인 마음을 갖고 준비할 거예요.",
+      "reflectedOnDay": 2,
+      "actionType": "script"
+    },
+    "char2": {
+      "id": "char2",
+      "name": "강준호",
+      "role": "직장인",
+      "avatar": "👨‍💼",
+      "personality": "[성격: 무뚝뚝하고 논리적임], [가치관: 효율성과 성취], [관심사: 최신 IT 기기, 전략 게임], [현재 목표: 회사에서 진행하는 프로젝트 성공적으로 이끌기], [특징: 무뚝뚝하지만 속은 따뜻함], [좋아하는 것: 커피, 컴퓨터 게임]",
+      "archetype": "officeWorker",
+      "location": "집",
+      "status": "취침",
+      "currentAction": "취침 중입니다.",
+      "thoughts": "...",
+      "conversationId": null,
+      "mood": "활기참",
+      "energy": 84.5,
+      "stress": 10,
+      "socialNeed": 98.5,
+      "journal": [
+        {
+          "timestamp": "2025-09-17T02:32:19.248Z",
+          "description": "환경 보호를 주제로 한 프로젝트 공모전 준비와 각자의 역할 및 계획에 대해 구체적으로 논의했다.",
+          "poignancy": 7,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:34:17.772Z",
+          "description": "프로젝트 아이디어를 논의하기 위해 세 카페 중 최적의 장소를 정하고 각자 정보를 찾아 공유하기로 하는 중요한 대화.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:36:29.203Z",
+          "description": "2일 19:0에 카페에서 '프로젝트 회의' 약속. (참여자: 이민지, 이수영, 강준호)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T02:36:41.542Z",
+          "description": "프로젝트 회의를 위해 카페에서 만나기로 하고 각자의 준비사항을 정리하는 논의가 이루어졌다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:38:29.733Z",
+          "description": "2일 13:0에 회사에서 '최종 점검' 약속. (참여자: 강준호, 이수영, 이민지)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T02:38:41.622Z",
+          "description": "우리는 회의 준비를 위해 각자 맡을 부분과 시간 계획을 명확히 정하며 협력하기로 했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:40:46.481Z",
+          "description": "이민지와 이수영과 함께 오후 3시에 모모 카페에서 프로젝트 아이디어를 논의하기로 계획함.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:47:17.611Z",
+          "description": "2일 14:0에 카페 모카에서 '프로젝트의 핵심 문제점과 해결 방안 논의' 약속. (참여자: 강준호, 이수영, 이민지)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T02:47:33.477Z",
+          "description": "내일 오후 2시에 '카페 모카'에서 프로젝트의 핵심 문제점과 해결 방안을 논의하기로 결정했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:50:23.962Z",
+          "description": "프로젝트 회의 준비를 위해 오후 2시에 카페 블루에서 아이디어를 정리하기로 하면서 각자 준비할 자료를 공유하고 효율적인 논의를 다짐했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T03:09:53.679Z",
+          "description": "저녁에 모여서 프로젝트 아이디어를 나누기 위해 간단한 토마토 파스타와 샐러드를 만들기로 재료를 정리하는 대화였다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T03:23:41.604Z",
+          "description": "1일 18:0에 카페에서 '피자 만들기' 약속. (참여자: 이민지, 이수영, 강준호)",
+          "poignancy": 6,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T03:23:46.300Z",
+          "description": "이민지와 이수영과 함께 카페에서 피자를 만들며 프로젝트에 대해 논의하기로 결정했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T03:29:00.555Z",
+          "description": "1일 14:0에 카페에서 '프로젝트 아이디어 구체화 및 자료 점검' 약속. (참여자: 이민지, 이수영, 강준호)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T03:29:04.862Z",
+          "description": "프로젝트 아이디어 구체화와 자료 점검을 위해 오후 2시에 시청 근처의 그린카페에서 만날 것을 결정했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T04:12:55.557Z",
+          "description": "이민지와 프로젝트의 진행 상황과 C 단계의 지연에 대한 해결책을 논의하며 긴급한 지원이 필요한 상황이다.",
+          "poignancy": 8,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T04:14:15.500Z",
+          "description": "이민지가 업무 스트레스로 힘들어하고 강준호가 그녀의 기분을 배려하며 도와주겠다고 약속한 대화.",
+          "poignancy": 8,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T04:24:56.192Z",
+          "description": "1일 14:0에 카페에서 '프로젝트 진행 상황 논의' 약속. (참여자: 강준호, 이민지, 이수영)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T04:25:00.792Z",
+          "description": "프로젝트 C의 단계 지연 문제 해결을 위한 구체적인 방안 및 핵심 문제 정리에 대해 이민지와 논의하며 준비하는 과정이었다.",
+          "poignancy": 7,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T05:29:15.208Z",
+          "description": "1일 14:0에 카페에서 '프로젝트 아이디어 논의 및 자료 준비' 약속. (참여자: 이민지, 강준호)",
+          "poignancy": 9,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T05:29:21.788Z",
+          "description": "이민지와 프로젝트 아이디어를 구체화하기 위해 스마트워크 카페에서 만나기로 계획하며 예산 관련 사항을 미리 정리하기로 했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T05:30:59.989Z",
+          "description": "프로젝트 논의를 위한 준비와 주제를 정리하며 서로의 의견을 조율하는 대화였다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T05:33:05.699Z",
+          "description": "2일 0:0에 카페에서 '커피 한 잔 하면서 이야기 나누기' 약속. (참여자: 이민지, 강준호)",
+          "poignancy": 6,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T05:33:10.195Z",
+          "description": "민지와 프로젝트에 대한 스트레스를 공유하며 내일 카페에서 만나는 계획을 세웠다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T05:34:10.556Z",
+          "description": "이민지가 힘든 하루를 보낸 것에 대해 걱정하고 서로의 안부를 전하며 따뜻한 마음을 나눈 대화였다.",
+          "poignancy": 7,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T06:03:50.251Z",
+          "description": "이민지와 이수영이 A안과 B안을 융합하는 방안에 대해 논의하며 협력적인 전략을 모색하는 대화였다.",
+          "poignancy": 7,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T06:05:51.823Z",
+          "description": "A안과 B안의 융합 방안에 대한 논의와 발생할 수 있는 리스크 관리 계획에 대한 구체적인 아이디어가 공유되었다.",
+          "poignancy": 8,
+          "type": "conversation"
+        }
+      ],
+      "relationships": {
+        "이수영": {
+          "affection": 109,
+          "trust": 124
+        },
+        "이민지": {
+          "affection": 91,
+          "trust": 148
+        }
+      },
+      "shortTermGoal": null,
+      "dailyPlan": "**아침:** 8시에 출근하여 프로젝트 공모전 자료들을 검토하고,  팀원들과 카페 미팅 장소를 확정하기 위한 최적의 장소 정보를 온라인으로 검색한다.  \n\n**점심:**  팀원들과 미팅 장소로 정해진 카페에서 점심 식사를 하며 프로젝트 아이디어에 대한 구체적인 논의를 진행한다. 효율적인 회의를 위해 미리 정리해 온 자료를 바탕으로 논의를 이끈다.\n\n**저녁:**  오늘 회의 내용을 정리하고, 프로젝트 진행에 필요한 추가 자료들을 찾아 분석한다.  잠시 게임으로 스트레스를 푼 후, 내일을 위한 계획을 세운다.\n",
+      "reflectedOnDay": 2,
+      "actionType": "script"
+    },
+    "char3": {
+      "id": "char3",
+      "name": "이수영",
+      "role": "카페 사장",
+      "avatar": "👩‍💼",
+      "personality": "[성격: 사교적이고 공감 능력이 뛰어남], [가치관: 관계와 즐거움], [관심사: 새로운 디저트 만들기, 동네 사람들과 수다 떨기], [현재 목표: 가게의 단골 손님 늘리기], [특징: 다른 사람의 고민을 잘 들어줌], [좋아하는 것: 원두 냄새, 디저트 장식하기], [행동 방식: 나는 사람들과의 관계를 가장 중요하게 생각해. 갈등이 생기는 걸 싫어해서 어떻게든 좋게 해결하려고 노력하는 편이야. 가끔은 너무 남을 신경 쓰다가 내 에너지가 방전될 때도 있지만, 그래도 다른 사람이 행복해하는 모습을 보면 나도 행복해져. 만약 내가 약속에 늦거나 실수를 했다면, 상대방의 기분이 상했을까 봐 몇 번이고 미안하다고 표현하며 관계를 회복하려고 애쓸 거야.]",
+      "archetype": "storeOwner",
+      "location": "집",
+      "status": "취침",
+      "currentAction": "취침 중입니다.",
+      "thoughts": "...",
+      "conversationId": null,
+      "mood": "평온",
+      "energy": 51.5,
+      "stress": 0,
+      "socialNeed": 99.5,
+      "journal": [
+        {
+          "timestamp": "2025-09-17T02:32:23.192Z",
+          "description": "이민지와 강준호가 환경 보호를 주제로 한 프로젝트 공모전을 준비하며, 제품 개발과 시장 조사 계획을 구체적으로 논의한 대화다.",
+          "poignancy": 8,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:34:28.150Z",
+          "description": "프로젝트 아이디어에 대해 회의할 카페를 선택하기 위해 서로 의견을 나누고 사진 및 리뷰를 공유하기로 했다.",
+          "poignancy": 5,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:36:29.203Z",
+          "description": "2일 19:0에 카페에서 '프로젝트 회의' 약속. (참여자: 이민지, 이수영, 강준호)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T02:36:48.240Z",
+          "description": "우리 세 명은 카페에서 프로젝트에 대해 논의하기로 하고 각자의 역할을 정리하며 준비하기로 했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:38:29.733Z",
+          "description": "2일 13:0에 회사에서 '최종 점검' 약속. (참여자: 강준호, 이수영, 이민지)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T02:38:59.785Z",
+          "description": "회의 준비를 위해 각자 맡을 역할과 시간 계획을 구체적으로 정리하며 협업의 효율성을 높이기로 했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:40:58.207Z",
+          "description": "이민지와 강준호와 함께 카페에서 프로젝트 아이디어를 논의하기로 하여 기대감이 커졌다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:47:17.611Z",
+          "description": "2일 14:0에 카페 모카에서 '프로젝트의 핵심 문제점과 해결 방안 논의' 약속. (참여자: 강준호, 이수영, 이민지)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T02:47:47.741Z",
+          "description": "우리는 내일 오후 2시에 카페 모카에서 프로젝트 회의를 열고, 핵심 문제점과 해결 방안을 논의하기로 결정했습니다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T02:50:32.249Z",
+          "description": "우리는 오후 2시에 카페 블루에서 프로젝트 아이디어를 정리하기 위해 각자 준비할 자료를 논의하며 계획을 세웠다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T03:09:57.246Z",
+          "description": "저녁에 모여서 토마토 파스타와 샐러드를 준비하며 프로젝트 아이디어를 나누기로 계획한 대화였다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T03:23:41.604Z",
+          "description": "1일 18:0에 카페에서 '피자 만들기' 약속. (참여자: 이민지, 이수영, 강준호)",
+          "poignancy": 6,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T03:23:49.545Z",
+          "description": "민지와 준호와 함께 '카페 이름'에서 저녁에 피자 만들기로 결정하며 프로젝트 회의와 요리 파티 계획을 논의했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T03:29:00.555Z",
+          "description": "1일 14:0에 카페에서 '프로젝트 아이디어 구체화 및 자료 점검' 약속. (참여자: 이민지, 이수영, 강준호)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T03:29:09.654Z",
+          "description": "우리는 오늘 오후 2시에 그린카페에서 프로젝트 아이디어를 구체화하고 필요한 자료를 점검하기로 결정했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T04:24:56.192Z",
+          "description": "1일 14:0에 카페에서 '프로젝트 진행 상황 논의' 약속. (참여자: 강준호, 이민지, 이수영)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T05:34:13.383Z",
+          "description": "이민지가 힘든 하루를 보냈다는 사실과 친구들이 서로를 걱정하는 모습이 드러난 대화였다.",
+          "poignancy": 7,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T06:02:28.264Z",
+          "description": "2일 19:0에 카페에서 '자료 정리 및 발표 연습' 약속. (참여자: 이민지, 이수영)",
+          "poignancy": 9,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T06:02:36.263Z",
+          "description": "이수영은 이민지의 발표 준비를 도와주기로 하여 서로 협력할 계획을 세웠다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T06:03:53.419Z",
+          "description": "이민지와 나는 A안과 B안을 융합하는 전략에 대해 논의하며 서로의 의견에 공감하고 구체적인 접근 방안을 고민했다.",
+          "poignancy": 8,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T06:05:47.651Z",
+          "description": "4일 14:0에 회사에서 '다음 회의' 약속. (참여자: 이민지, 이수영)",
+          "poignancy": 9,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T06:05:55.572Z",
+          "description": "A안과 B안의 융합 방안에 대한 리스크 관리와 대응 전략을 논의하며 구체적인 계획 수립의 중요성을 확인했다.",
+          "poignancy": 8,
+          "type": "conversation"
+        }
+      ],
+      "relationships": {
+        "이민지": {
+          "affection": 170,
+          "trust": 216
+        },
+        "강준호": {
+          "affection": 103,
+          "trust": 125
+        }
+      },
+      "shortTermGoal": null,
+      "dailyPlan": "**아침:** 오늘은 이민지 씨와 강준호 씨가 프로젝트 회의를 위해 내 카페를 방문하기로 했으니, 그들이 좋아할 만한 새로운 디저트를 만들어보고, 카페 분위기를 더욱 편안하게 만들도록 정리해야겠어.  원두 향 가득한 맛있는 커피도 준비해야지!\n\n**점심:** 이민지 씨와 강준호 씨가 프로젝트 회의를 마치면 맛있는 점심을 함께 먹으면서  환경 보호 프로젝트에 대해 자연스럽게 이야기를 나누고,  카페를 선택한 이유와 프로젝트 진행에 도움이 될 만한 조언을 해주고 싶어.\n\n**저녁:** 오늘 하루 손님들과 나눈 대화들을 정리하면서  내 카페를 더욱 발전시킬 방법들을 생각해보고,  새로운 디저트 레시피를 연구하며  내일을 위한 준비를 할 거야.  그리고  오늘 만난 이민지 씨와 강준호 씨의 프로젝트가 잘 진행되기를 응원하며 편안한 밤을 보내야지.\n",
+      "reflectedOnDay": 2,
+      "actionType": "script"
+    }
+  },
+  "situation": {
+    "day": 2,
+    "currentHour": 1,
+    "currentMinute": 0,
+    "allCharacters": [
+      {
+        "id": "char1",
+        "name": "이민지",
+        "role": "대학생",
+        "avatar": "👩‍🎓",
+        "personality": "[성격: 내향적이고 창의적임], [가치관: 안정과 성실함], [관심사: 그림 그리기, 미스터리 소설 읽기], [현재 목표: 다가오는 프로젝트 공모전에서 좋은 성과 내기], [특징: 가끔 엉뚱한 상상을 즐김], [좋아하는 것: 단 디저트, 책 읽기]",
+        "archetype": "student",
+        "location": "카페",
+        "status": "오전 공부",
+        "currentAction": "도서관에서 일어난 일들을 정리하면서 약속 장소로 이동하기 위해 짐을 챙기고 나간다.",
+        "thoughts": "...",
+        "conversationId": null,
+        "mood": "지침",
+        "energy": 18.5,
+        "stress": 100,
+        "socialNeed": 99.5,
+        "journal": [
+          {
+            "timestamp": "2025-09-17T02:32:11.354Z",
+            "description": "이민지와 강준호, 이수영이 환경 보호를 주제로 한 프로젝트 공모전 준비를 위해 구체적인 역할과 계획을 논의하는 대화였다.",
+            "poignancy": 8,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:34:05.142Z",
+            "description": "이민지와 친구들이 프로젝트 회의를 위해 카페 장소를 정하는 과정을 논의하며 각자의 의견을 나누었다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:36:29.203Z",
+            "description": "2일 19:0에 카페에서 '프로젝트 회의' 약속. (참여자: 이민지, 이수영, 강준호)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T02:36:30.635Z",
+            "description": "프로젝트 회의 준비를 위해 카페와 시간을 정하고 각자의 역할을 분담하기로 하였다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:38:29.733Z",
+            "description": "2일 13:0에 회사에서 '최종 점검' 약속. (참여자: 강준호, 이수영, 이민지)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T02:38:31.097Z",
+            "description": "우리 팀은 카페 회의 준비를 위해 각자의 역할을 명확히 하고, 시간 계획을 세워 효율적으로 준비하기로 했다.",
+            "poignancy": 7,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:40:34.208Z",
+            "description": "이민지와 강준호, 이수영은 모모 카페에서 오후 3시에 만나 프로젝트 아이디어를 정리하고 발전 방향에 대해 논의하기로 했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:47:17.611Z",
+            "description": "2일 14:0에 카페 모카에서 '프로젝트의 핵심 문제점과 해결 방안 논의' 약속. (참여자: 강준호, 이수영, 이민지)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T02:47:19.339Z",
+            "description": "내일 오후 2시에 카페 모카에서 프로젝트의 핵심 문제점과 해결 방안을 논의하기로 결정했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:50:12.064Z",
+            "description": "이민지와 친구들이 프로젝트 회의를 위해 카페에서 아이디어를 정리하기로 하며 각자 준비할 자료를 논의했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T03:09:50.044Z",
+            "description": "이민지, 강준호, 이수영 세 친구가 저녁에 함께 요리하고 프로젝트에 대해 이야기하기로 하며 구체적인 메뉴와 재료를 정리하는 대화가 있었다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T03:23:41.604Z",
+            "description": "1일 18:0에 카페에서 '피자 만들기' 약속. (참여자: 이민지, 이수영, 강준호)",
+            "poignancy": 6,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T03:23:43.104Z",
+            "description": "이민지와 친구들은 카페에서 피자 요리를 하며 프로젝트에 대해 논의하기로 결정하고 역할을 분담하기로 했다.",
+            "poignancy": 7,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T03:29:00.555Z",
+            "description": "1일 14:0에 카페에서 '프로젝트 아이디어 구체화 및 자료 점검' 약속. (참여자: 이민지, 이수영, 강준호)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T03:29:01.978Z",
+            "description": "오늘 오후 2시에 프로젝트 아이디어 구체화와 자료 점검을 위해 그린카페에서 만나는 계획을 세웠다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T04:12:52.103Z",
+            "description": "이민지와 강준호는 프로젝트 진행 상황과 C 단계의 지연 문제를 해결하기 위한 구체적인 방안을 논의하였다.",
+            "poignancy": 8,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T04:14:11.966Z",
+            "description": "강준호는 이민지의 스트레스를 이해하고 함께 문제를 해결하려고 도와주려는 의지를 보였다.",
+            "poignancy": 8,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T04:24:56.192Z",
+            "description": "1일 14:0에 카페에서 '프로젝트 진행 상황 논의' 약속. (참여자: 강준호, 이민지, 이수영)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T04:24:57.652Z",
+            "description": "프로젝트 C 단계 지연 문제를 해결하기 위해 강준호 씨와 이수영 씨와의 논의 전에 핵심 문제를 정리하고 대안을 모색하기로 했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T05:29:15.208Z",
+            "description": "1일 14:0에 카페에서 '프로젝트 아이디어 논의 및 자료 준비' 약속. (참여자: 이민지, 강준호)",
+            "poignancy": 9,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T05:29:16.663Z",
+            "description": "강준호와의 프로젝트 논의를 위해 스마트워크 카페에서 만나기로 정하고 준비할 사항을 각자 확인하는 내용의 대화.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T05:30:56.746Z",
+            "description": "이민지와 강준호는 프로젝트를 논의하기 위해 점심 후 카페에서 만나기로 하고, 구체적인 논의 주제와 준비 사항을 정리했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T05:33:05.699Z",
+            "description": "2일 0:0에 카페에서 '커피 한 잔 하면서 이야기 나누기' 약속. (참여자: 이민지, 강준호)",
+            "poignancy": 6,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T05:33:06.843Z",
+            "description": "이민지와 강준호는 내일 프로젝트로 인해 서로의 스트레스를 공유하고 카페에서 이야기를 나누기로 했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T05:34:06.644Z",
+            "description": "이민지가 오늘 힘든 하루를 보냈다는 이야기를 나누며 친구들의 걱정과 배려를 느꼈다.",
+            "poignancy": 7,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T06:02:28.264Z",
+            "description": "2일 19:0에 카페에서 '자료 정리 및 발표 연습' 약속. (참여자: 이민지, 이수영)",
+            "poignancy": 9,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T06:02:31.153Z",
+            "description": "이민지가 발표 준비 때문에 힘든 상황에서 이수영이 도움을 제안하며 함께 준비하기로 약속한 대화。",
+            "poignancy": 8,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T06:03:46.645Z",
+            "description": "A안과 B안을 융합하는 방안에 대해 긍정적인 논의가 이루어졌다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T06:05:47.651Z",
+            "description": "4일 14:0에 회사에서 '다음 회의' 약속. (참여자: 이민지, 이수영)",
+            "poignancy": 9,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T06:05:49.267Z",
+            "description": "A안과 B안의 융합 방안과 발생 가능한 리스크 관리에 대한 구체적인 논의가 이루어졌다.",
+            "poignancy": 8,
+            "type": "conversation"
+          }
+        ],
+        "relationships": {
+          "이수영": {
+            "affection": 141,
+            "trust": 186
+          },
+          "강준호": {
+            "affection": 103,
+            "trust": 158
+          }
+        },
+        "shortTermGoal": null,
+        "dailyPlan": "### 아침\n오늘 아침에는 간단한 아침식사를 하며 미스터리 소설의 한 챕터를 읽고, 프로젝트 공모전을 위한 아이디어 스케치를 해볼 계획이에요.\n\n### 점심\n점심시간에는 친구들과 함께 카페에서 만나 프로젝트 역할 분담에 대해 구체적으로 논의하고, 아이디어를 발전시키는 시간을 가질 예정이에요.\n\n### 저녁\n저녁에는 집에서 그림 그리기를 하며 하루를 마무리하고, 프로젝트를 위한 자료 정리를 하면서 안정적인 마음을 갖고 준비할 거예요.",
+        "reflectedOnDay": 2,
+        "actionType": "script",
+        "personalLog": [],
+        "isExpanded": false,
+        "isInConversation": false,
+        "conversationLockTimer": 0
+      },
+      {
+        "id": "char2",
+        "name": "강준호",
+        "role": "직장인",
+        "avatar": "👨‍💼",
+        "personality": "[성격: 무뚝뚝하고 논리적임], [가치관: 효율성과 성취], [관심사: 최신 IT 기기, 전략 게임], [현재 목표: 회사에서 진행하는 프로젝트 성공적으로 이끌기], [특징: 무뚝뚝하지만 속은 따뜻함], [좋아하는 것: 커피, 컴퓨터 게임]",
+        "archetype": "officeWorker",
+        "location": "집",
+        "status": "취침",
+        "currentAction": "취침 중입니다.",
+        "thoughts": "...",
+        "conversationId": null,
+        "mood": "활기참",
+        "energy": 85,
+        "stress": 12,
+        "socialNeed": 99,
+        "journal": [
+          {
+            "timestamp": "2025-09-17T02:32:19.248Z",
+            "description": "환경 보호를 주제로 한 프로젝트 공모전 준비와 각자의 역할 및 계획에 대해 구체적으로 논의했다.",
+            "poignancy": 7,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:34:17.772Z",
+            "description": "프로젝트 아이디어를 논의하기 위해 세 카페 중 최적의 장소를 정하고 각자 정보를 찾아 공유하기로 하는 중요한 대화.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:36:29.203Z",
+            "description": "2일 19:0에 카페에서 '프로젝트 회의' 약속. (참여자: 이민지, 이수영, 강준호)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T02:36:41.542Z",
+            "description": "프로젝트 회의를 위해 카페에서 만나기로 하고 각자의 준비사항을 정리하는 논의가 이루어졌다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:38:29.733Z",
+            "description": "2일 13:0에 회사에서 '최종 점검' 약속. (참여자: 강준호, 이수영, 이민지)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T02:38:41.622Z",
+            "description": "우리는 회의 준비를 위해 각자 맡을 부분과 시간 계획을 명확히 정하며 협력하기로 했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:40:46.481Z",
+            "description": "이민지와 이수영과 함께 오후 3시에 모모 카페에서 프로젝트 아이디어를 논의하기로 계획함.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:47:17.611Z",
+            "description": "2일 14:0에 카페 모카에서 '프로젝트의 핵심 문제점과 해결 방안 논의' 약속. (참여자: 강준호, 이수영, 이민지)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T02:47:33.477Z",
+            "description": "내일 오후 2시에 '카페 모카'에서 프로젝트의 핵심 문제점과 해결 방안을 논의하기로 결정했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:50:23.962Z",
+            "description": "프로젝트 회의 준비를 위해 오후 2시에 카페 블루에서 아이디어를 정리하기로 하면서 각자 준비할 자료를 공유하고 효율적인 논의를 다짐했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T03:09:53.679Z",
+            "description": "저녁에 모여서 프로젝트 아이디어를 나누기 위해 간단한 토마토 파스타와 샐러드를 만들기로 재료를 정리하는 대화였다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T03:23:41.604Z",
+            "description": "1일 18:0에 카페에서 '피자 만들기' 약속. (참여자: 이민지, 이수영, 강준호)",
+            "poignancy": 6,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T03:23:46.300Z",
+            "description": "이민지와 이수영과 함께 카페에서 피자를 만들며 프로젝트에 대해 논의하기로 결정했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T03:29:00.555Z",
+            "description": "1일 14:0에 카페에서 '프로젝트 아이디어 구체화 및 자료 점검' 약속. (참여자: 이민지, 이수영, 강준호)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T03:29:04.862Z",
+            "description": "프로젝트 아이디어 구체화와 자료 점검을 위해 오후 2시에 시청 근처의 그린카페에서 만날 것을 결정했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T04:12:55.557Z",
+            "description": "이민지와 프로젝트의 진행 상황과 C 단계의 지연에 대한 해결책을 논의하며 긴급한 지원이 필요한 상황이다.",
+            "poignancy": 8,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T04:14:15.500Z",
+            "description": "이민지가 업무 스트레스로 힘들어하고 강준호가 그녀의 기분을 배려하며 도와주겠다고 약속한 대화.",
+            "poignancy": 8,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T04:24:56.192Z",
+            "description": "1일 14:0에 카페에서 '프로젝트 진행 상황 논의' 약속. (참여자: 강준호, 이민지, 이수영)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T04:25:00.792Z",
+            "description": "프로젝트 C의 단계 지연 문제 해결을 위한 구체적인 방안 및 핵심 문제 정리에 대해 이민지와 논의하며 준비하는 과정이었다.",
+            "poignancy": 7,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T05:29:15.208Z",
+            "description": "1일 14:0에 카페에서 '프로젝트 아이디어 논의 및 자료 준비' 약속. (참여자: 이민지, 강준호)",
+            "poignancy": 9,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T05:29:21.788Z",
+            "description": "이민지와 프로젝트 아이디어를 구체화하기 위해 스마트워크 카페에서 만나기로 계획하며 예산 관련 사항을 미리 정리하기로 했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T05:30:59.989Z",
+            "description": "프로젝트 논의를 위한 준비와 주제를 정리하며 서로의 의견을 조율하는 대화였다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T05:33:05.699Z",
+            "description": "2일 0:0에 카페에서 '커피 한 잔 하면서 이야기 나누기' 약속. (참여자: 이민지, 강준호)",
+            "poignancy": 6,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T05:33:10.195Z",
+            "description": "민지와 프로젝트에 대한 스트레스를 공유하며 내일 카페에서 만나는 계획을 세웠다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T05:34:10.556Z",
+            "description": "이민지가 힘든 하루를 보낸 것에 대해 걱정하고 서로의 안부를 전하며 따뜻한 마음을 나눈 대화였다.",
+            "poignancy": 7,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T06:03:50.251Z",
+            "description": "이민지와 이수영이 A안과 B안을 융합하는 방안에 대해 논의하며 협력적인 전략을 모색하는 대화였다.",
+            "poignancy": 7,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T06:05:51.823Z",
+            "description": "A안과 B안의 융합 방안에 대한 논의와 발생할 수 있는 리스크 관리 계획에 대한 구체적인 아이디어가 공유되었다.",
+            "poignancy": 8,
+            "type": "conversation"
+          }
+        ],
+        "relationships": {
+          "이수영": {
+            "affection": 109,
+            "trust": 124
+          },
+          "이민지": {
+            "affection": 91,
+            "trust": 148
+          }
+        },
+        "shortTermGoal": null,
+        "dailyPlan": "**아침:** 8시에 출근하여 프로젝트 공모전 자료들을 검토하고,  팀원들과 카페 미팅 장소를 확정하기 위한 최적의 장소 정보를 온라인으로 검색한다.  \n\n**점심:**  팀원들과 미팅 장소로 정해진 카페에서 점심 식사를 하며 프로젝트 아이디어에 대한 구체적인 논의를 진행한다. 효율적인 회의를 위해 미리 정리해 온 자료를 바탕으로 논의를 이끈다.\n\n**저녁:**  오늘 회의 내용을 정리하고, 프로젝트 진행에 필요한 추가 자료들을 찾아 분석한다.  잠시 게임으로 스트레스를 푼 후, 내일을 위한 계획을 세운다.\n",
+        "reflectedOnDay": 2,
+        "actionType": "script",
+        "personalLog": [],
+        "isExpanded": false,
+        "isInConversation": false,
+        "conversationLockTimer": 0
+      },
+      {
+        "id": "char3",
+        "name": "이수영",
+        "role": "카페 사장",
+        "avatar": "👩‍💼",
+        "personality": "[성격: 사교적이고 공감 능력이 뛰어남], [가치관: 관계와 즐거움], [관심사: 새로운 디저트 만들기, 동네 사람들과 수다 떨기], [현재 목표: 가게의 단골 손님 늘리기], [특징: 다른 사람의 고민을 잘 들어줌], [좋아하는 것: 원두 냄새, 디저트 장식하기], [행동 방식: 나는 사람들과의 관계를 가장 중요하게 생각해. 갈등이 생기는 걸 싫어해서 어떻게든 좋게 해결하려고 노력하는 편이야. 가끔은 너무 남을 신경 쓰다가 내 에너지가 방전될 때도 있지만, 그래도 다른 사람이 행복해하는 모습을 보면 나도 행복해져. 만약 내가 약속에 늦거나 실수를 했다면, 상대방의 기분이 상했을까 봐 몇 번이고 미안하다고 표현하며 관계를 회복하려고 애쓸 거야.]",
+        "archetype": "storeOwner",
+        "location": "카페",
+        "status": "기상 및 오픈 준비",
+        "currentAction": "기상 및 오픈 준비 중입니다.",
+        "thoughts": "...",
+        "conversationId": null,
+        "mood": "평온",
+        "energy": 52,
+        "stress": 0,
+        "socialNeed": 100,
+        "journal": [
+          {
+            "timestamp": "2025-09-17T02:32:23.192Z",
+            "description": "이민지와 강준호가 환경 보호를 주제로 한 프로젝트 공모전을 준비하며, 제품 개발과 시장 조사 계획을 구체적으로 논의한 대화다.",
+            "poignancy": 8,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:34:28.150Z",
+            "description": "프로젝트 아이디어에 대해 회의할 카페를 선택하기 위해 서로 의견을 나누고 사진 및 리뷰를 공유하기로 했다.",
+            "poignancy": 5,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:36:29.203Z",
+            "description": "2일 19:0에 카페에서 '프로젝트 회의' 약속. (참여자: 이민지, 이수영, 강준호)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T02:36:48.240Z",
+            "description": "우리 세 명은 카페에서 프로젝트에 대해 논의하기로 하고 각자의 역할을 정리하며 준비하기로 했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:38:29.733Z",
+            "description": "2일 13:0에 회사에서 '최종 점검' 약속. (참여자: 강준호, 이수영, 이민지)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T02:38:59.785Z",
+            "description": "회의 준비를 위해 각자 맡을 역할과 시간 계획을 구체적으로 정리하며 협업의 효율성을 높이기로 했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:40:58.207Z",
+            "description": "이민지와 강준호와 함께 카페에서 프로젝트 아이디어를 논의하기로 하여 기대감이 커졌다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:47:17.611Z",
+            "description": "2일 14:0에 카페 모카에서 '프로젝트의 핵심 문제점과 해결 방안 논의' 약속. (참여자: 강준호, 이수영, 이민지)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T02:47:47.741Z",
+            "description": "우리는 내일 오후 2시에 카페 모카에서 프로젝트 회의를 열고, 핵심 문제점과 해결 방안을 논의하기로 결정했습니다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T02:50:32.249Z",
+            "description": "우리는 오후 2시에 카페 블루에서 프로젝트 아이디어를 정리하기 위해 각자 준비할 자료를 논의하며 계획을 세웠다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T03:09:57.246Z",
+            "description": "저녁에 모여서 토마토 파스타와 샐러드를 준비하며 프로젝트 아이디어를 나누기로 계획한 대화였다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T03:23:41.604Z",
+            "description": "1일 18:0에 카페에서 '피자 만들기' 약속. (참여자: 이민지, 이수영, 강준호)",
+            "poignancy": 6,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T03:23:49.545Z",
+            "description": "민지와 준호와 함께 '카페 이름'에서 저녁에 피자 만들기로 결정하며 프로젝트 회의와 요리 파티 계획을 논의했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T03:29:00.555Z",
+            "description": "1일 14:0에 카페에서 '프로젝트 아이디어 구체화 및 자료 점검' 약속. (참여자: 이민지, 이수영, 강준호)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T03:29:09.654Z",
+            "description": "우리는 오늘 오후 2시에 그린카페에서 프로젝트 아이디어를 구체화하고 필요한 자료를 점검하기로 결정했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T04:24:56.192Z",
+            "description": "1일 14:0에 카페에서 '프로젝트 진행 상황 논의' 약속. (참여자: 강준호, 이민지, 이수영)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T05:34:13.383Z",
+            "description": "이민지가 힘든 하루를 보냈다는 사실과 친구들이 서로를 걱정하는 모습이 드러난 대화였다.",
+            "poignancy": 7,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T06:02:28.264Z",
+            "description": "2일 19:0에 카페에서 '자료 정리 및 발표 연습' 약속. (참여자: 이민지, 이수영)",
+            "poignancy": 9,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T06:02:36.263Z",
+            "description": "이수영은 이민지의 발표 준비를 도와주기로 하여 서로 협력할 계획을 세웠다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T06:03:53.419Z",
+            "description": "이민지와 나는 A안과 B안을 융합하는 전략에 대해 논의하며 서로의 의견에 공감하고 구체적인 접근 방안을 고민했다.",
+            "poignancy": 8,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T06:05:47.651Z",
+            "description": "4일 14:0에 회사에서 '다음 회의' 약속. (참여자: 이민지, 이수영)",
+            "poignancy": 9,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T06:05:55.572Z",
+            "description": "A안과 B안의 융합 방안에 대한 리스크 관리와 대응 전략을 논의하며 구체적인 계획 수립의 중요성을 확인했다.",
+            "poignancy": 8,
+            "type": "conversation"
+          }
+        ],
+        "relationships": {
+          "이민지": {
+            "affection": 170,
+            "trust": 216
+          },
+          "강준호": {
+            "affection": 103,
+            "trust": 125
+          }
+        },
+        "shortTermGoal": null,
+        "dailyPlan": "**아침:** 오늘은 이민지 씨와 강준호 씨가 프로젝트 회의를 위해 내 카페를 방문하기로 했으니, 그들이 좋아할 만한 새로운 디저트를 만들어보고, 카페 분위기를 더욱 편안하게 만들도록 정리해야겠어.  원두 향 가득한 맛있는 커피도 준비해야지!\n\n**점심:** 이민지 씨와 강준호 씨가 프로젝트 회의를 마치면 맛있는 점심을 함께 먹으면서  환경 보호 프로젝트에 대해 자연스럽게 이야기를 나누고,  카페를 선택한 이유와 프로젝트 진행에 도움이 될 만한 조언을 해주고 싶어.\n\n**저녁:** 오늘 하루 손님들과 나눈 대화들을 정리하면서  내 카페를 더욱 발전시킬 방법들을 생각해보고,  새로운 디저트 레시피를 연구하며  내일을 위한 준비를 할 거야.  그리고  오늘 만난 이민지 씨와 강준호 씨의 프로젝트가 잘 진행되기를 응원하며 편안한 밤을 보내야지.\n",
+        "reflectedOnDay": 2,
+        "actionType": "script",
+        "personalLog": [],
+        "isExpanded": false,
+        "isInConversation": false,
+        "conversationLockTimer": 0
+      }
+    ]
+  },
+  "activeConversations": [],
+  "messageQueue": [],
+  "llmConfigs": {
+    "char1": {
+      "provider": "gpt"
+    },
+    "char2": {
+      "provider": "gemini"
+    },
+    "char3": {
+      "provider": "gemini"
+    }
+  }
+}
