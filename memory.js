@@ -20,9 +20,8 @@ function calculateRecencyScore(memory) {
         return score;
     } else {
         // [과거의 기억] 생성된 지 오래될수록 점수가 0에 가까워집니다.
-        // (예: 24시간 전 = 0.78, 1시간 전 = 0.99)
         const hoursAgo = Math.abs(timeDiffHours);
-        return Math.pow(0.99, hoursAgo);
+        return Math.pow(0.5, hoursAgo); // 0.99 → 0.5로 변경
     }
 }
 
