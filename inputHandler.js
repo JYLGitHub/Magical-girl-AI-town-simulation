@@ -7,6 +7,8 @@ const { updateRelationshipFromConversation } = require('./relationships.js');
 
 // [수정] 이제 agentActions도 인자로 함께 받습니다.
 async function processActions(actions, world) {
+    console.log("\n--- [2.5단계: 핸들러가 받은 계획서] ---");
+    console.log(actions);
     // [수정] worldState 대신 world에서 필요한 모든 데이터를 가져옵니다.
     const { characterDatabase, activeConversations, llmConfigs, situation } = world;
     const actionLogs = [];
@@ -68,6 +70,8 @@ async function processActions(actions, world) {
         if (!character || action.actionName === 'startConversation') continue;
 
         let description = '';
+        const conv = activeConversations.find(c => c.id === character.conversationId);
+
         if (character.conversationId) {
             const conv = activeConversations.find(c => c.id === character.conversationId);
             if (!conv || !conv.isActive) continue;

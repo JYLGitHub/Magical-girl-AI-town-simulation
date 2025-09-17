@@ -102,6 +102,9 @@ class World {
             console.log(`  - ${charName}: ${action.actionName} - "${(action.content || '').substring(0, 50)}..."`);
         });
 
+        console.log("\n--- [1.5단계: 행동 계획서 원본] ---");
+        console.log(agentActions);
+
         console.log("\n--- [2단계: 액션 일괄 처리 시작] ---");
         await processActions(agentActions, this);
 

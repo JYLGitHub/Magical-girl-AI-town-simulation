@@ -88,8 +88,7 @@ async function fetchWorldStateAndUpdateUI() {
     try {
         const response = await fetch('/api/get-world-state');
         if (!response.ok) throw new Error('서버 상태 가져오기 실패');
-
-        const serverWorld = await response.json();
+=        const serverWorld = await response.json();
         
         // [핵심 수정] 데이터를 통째로 덮어쓰는 대신, 캐릭터별로 업데이트합니다.
         for (const charId in serverWorld.characters) {
