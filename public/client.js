@@ -88,6 +88,8 @@ async function fetchWorldStateAndUpdateUI() {
     try {
         const response = await fetch('/api/get-world-state');
         if (!response.ok) throw new Error('서버 상태 가져오기 실패');
+
+        const serverWorld = await response.json();
         
         // [핵심 수정] 데이터를 통째로 덮어쓰는 대신, 캐릭터별로 업데이트합니다.
         for (const charId in serverWorld.characters) {
@@ -104,7 +106,8 @@ async function fetchWorldStateAndUpdateUI() {
 
         // 서버에서 받은 최신 데이터로 클라이언트의 gameState를 덮어씁니다.
         gameState.situation = serverWorld.situation;
-        gameState.mainEvents = serverWorld.mainEvents;
+        // [수정] mainEvents가 없을 경우를 대비합니다.
+        gameState.mainEvents = serverWorld.mainEvents || [];
 
         // 화면을 새로 그립니다.
         updateAllUI();

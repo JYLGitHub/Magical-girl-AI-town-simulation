@@ -13,9 +13,9 @@
       "thoughts": "...",
       "conversationId": "conv-1758112933202-char1-char2-char3",
       "mood": "평온",
-      "energy": 20,
-      "stress": 13,
-      "socialNeed": 98,
+      "energy": 17.5,
+      "stress": 38,
+      "socialNeed": 95.5,
       "journal": [],
       "relationships": {},
       "shortTermGoal": null,
@@ -39,9 +39,9 @@
       "thoughts": "...",
       "conversationId": "conv-1758112933202-char1-char2-char3",
       "mood": "지침",
-      "energy": 2,
-      "stress": 94,
-      "socialNeed": 96,
+      "energy": 0,
+      "stress": 100,
+      "socialNeed": 93.5,
       "journal": [],
       "relationships": {},
       "shortTermGoal": null,
@@ -65,9 +65,9 @@
       "thoughts": "...",
       "conversationId": "conv-1758112933202-char1-char2-char3",
       "mood": "활기참",
-      "energy": 88.5,
+      "energy": 86,
       "stress": 0,
-      "socialNeed": 96,
+      "socialNeed": 93.5,
       "journal": [],
       "relationships": {},
       "shortTermGoal": null,
@@ -81,8 +81,8 @@
   },
   "situation": {
     "day": 2,
-    "currentHour": 1,
-    "currentMinute": 0
+    "currentHour": 3,
+    "currentMinute": 30
   },
   "activeConversations": [
     {
