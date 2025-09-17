@@ -34,6 +34,9 @@ function createCharacter(initialData) {
         relationships: {},
         shortTermGoal: null,
         dailyPlan: [], // ⭐ AI가 생성한 하루 계획(문장)을 저장할 공간
+        currentPlan: null,        // 현재 실행 중인 계획
+        planEndTime: null,        // 계획 종료 시간
+        lastPlanTime: 0,          // 마지막으로 계획을 세운 시간
 
     };
 }

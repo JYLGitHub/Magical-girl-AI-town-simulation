@@ -59,10 +59,11 @@ function shouldUseAI(character, situation) {
 }
 
 function applySchedule(character, situation) {
+    if (Math.random() < 0.2) {
     console.log(`[스케줄 확인] ${character.name} (${character.archetype}) - 현재시간: ${situation.currentHour}시`);
+    }
     const scheduleSet = scenarios[activeScenarioName]?.archetypes[character.archetype]?.schedule;
 
-    
     if (!scheduleSet) {
         console.log(`[스케줄 오류] ${character.name}의 archetype(${character.archetype}) 스케줄을 찾을 수 없음`);
         return null;
@@ -319,20 +320,58 @@ async function runAgent(character, worldState) {
     }
     
     if (shouldUseAI(character, { ...situation, characterDatabase })) {
-        return await think(character, situation, llmConfigs[character.id]?.provider, activeConversations, characterDatabase);
-    } else {
+        const plan = await makePlan(character, situation, llmConfigs[character.id]?.provider, activeConversations, characterDatabase);
+        return plan;
+        } else {
         const scriptPlan = processWithScript(character, situation);
         return {
-        actionName: 'script',
-        location: scriptPlan.location,  
-        status: scriptPlan.status,    
-        content: scriptPlan.content,
-        thoughts: scriptPlan.thoughts
+            actionName: 'script',
+            location: scriptPlan.location,
+            status: scriptPlan.status,
+            content: scriptPlan.content,
+            thoughts: scriptPlan.thoughts
         };
     }
 }
 
+async function makePlan(character, situation, provider, activeConversations, characterDatabase) {
+    // 1-3분 단위로만 새 계획 수립
+    const currentTimeMinutes = situation.day * 24 * 60 + situation.currentHour * 60 + situation.currentMinute;
+    
+    if (character.currentPlan && currentTimeMinutes < character.planEndTime) {
+        return character.currentPlan; // 기존 계획 유지
+    }
+    
+    // AI가 다음 몇 분간 무엇을 할지 계획
+    // 현재 상황을 더 자세히 분석
+    const currentConv = activeConversations.find(c => c.participants.includes(character.id));
+    const isInConversation = !!currentConv;
+    const nearbyConversations = activeConversations.filter(c => {
+        return c.participants.some(pId => {
+            const participant = characterDatabase[pId];
+            return participant && participant.location === character.location && pId !== character.id;
+        });
+    });
+
+    console.log(`[상황 분석] ${character.name} - 대화중: ${isInConversation}, 주변 대화: ${nearbyConversations.length}개`);
+
+    // AI가 다음 몇 분간 무엇을 할지 계획
+    const decision = await think(character, situation, provider, activeConversations, characterDatabase);
+    
+    // 계획 지속 시간 설정 (1-3분)
+    const planDuration = Math.floor(Math.random() * 3) + 1;
+    
+    character.currentPlan = decision;
+    character.planEndTime = currentTimeMinutes + planDuration;
+    character.lastPlanTime = currentTimeMinutes;
+    
+    console.log(`[계획 수립] ${character.name} - ${planDuration}분간: ${decision.actionName}`);
+    
+    return decision;
+}
+
 module.exports = { 
+    makePlan,
     runAgent, 
     think, 
     shouldUseAI, 

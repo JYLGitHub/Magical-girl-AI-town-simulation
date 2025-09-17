@@ -77,7 +77,7 @@ function retrieveMemories(character, situationContext) {
     scoredMemories.sort((a, b) => b.score - a.score);
     
     // 상위 10개의 기억만 반환
-    return scoredMemories.slice(0, 10);
+    return scoredMemories.slice(0, 5);
 }
 
 

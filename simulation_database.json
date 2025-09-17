@@ -13,7 +13,7 @@
       "thoughts": "...",
       "conversationId": null,
       "mood": "지침",
-      "energy": 18,
+      "energy": 2.5,
       "stress": 100,
       "socialNeed": 99,
       "journal": [
@@ -196,22 +196,73 @@
           "description": "A안과 B안의 융합 방안과 발생 가능한 리스크 관리에 대한 구체적인 논의가 이루어졌다.",
           "poignancy": 8,
           "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T06:58:00.069Z",
+          "description": "이민지가 발표 준비에 어려움을 겪고 있지만, 이수영이 도움을 주기로 하며 서로의 자료를 공유하고 협력하기로 약속했다.",
+          "poignancy": 8,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:00:41.794Z",
+          "description": "이민지는 팀의 프로젝트 회의 준비에 대한 아이디어를 공유하며, 피로를 느끼지만 동료들의 지원과 협력으로 회의 준비를 효율적으로 진행하기로 결정했다.",
+          "poignancy": 7,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:09:50.747Z",
+          "description": "강준호와 이수영이 피곤한 상태로 약속 시간을 조정하여 각자 쉬고 나중에 다시 만나는 것으로 결정했다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:22:14.295Z",
+          "description": "이민지와 친구들이 약속 장소로 가기 전 즐거운 대화를 나누고 서로의 기대감을 높이는 모습이 인상적이었다.",
+          "poignancy": 6,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:22:57.383Z",
+          "description": "이수영은 민지의 어려움을 이해하고, 오늘은 약속을 연기하며 민지를 걱정해주는 따뜻한 마음을 전했다.",
+          "poignancy": 8,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:24:36.771Z",
+          "description": "3일 19:0에 카페 봄에서 '프로젝트에 대한 최종 의견을 정리하고 추가 아이디어를 논의' 약속. (참여자: 강준호, 이수영, 이민지)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T07:24:38.214Z",
+          "description": "강준호, 이수영과 함께 프로젝트에 대한 최종 의견을 정리하고 추가 아이디어를 논의하기 위해 카페에서 만나는 계획을 세웠다.",
+          "poignancy": 5,
+          "type": "conversation"
         }
       ],
       "relationships": {
         "이수영": {
-          "affection": 141,
-          "trust": 186
+          "affection": 189,
+          "trust": 252
         },
         "강준호": {
           "affection": 103,
-          "trust": 158
+          "trust": 173
         }
       },
       "shortTermGoal": null,
       "dailyPlan": "### 아침\n오늘 아침에는 간단한 아침식사를 하며 미스터리 소설의 한 챕터를 읽고, 프로젝트 공모전을 위한 아이디어 스케치를 해볼 계획이에요.\n\n### 점심\n점심시간에는 친구들과 함께 카페에서 만나 프로젝트 역할 분담에 대해 구체적으로 논의하고, 아이디어를 발전시키는 시간을 가질 예정이에요.\n\n### 저녁\n저녁에는 집에서 그림 그리기를 하며 하루를 마무리하고, 프로젝트를 위한 자료 정리를 하면서 안정적인 마음을 갖고 준비할 거예요.",
       "reflectedOnDay": 2,
-      "actionType": "script"
+      "actionType": "script",
+      "currentPlan": {
+        "thoughts": "지금 너무 지치고 스트레스가 높은 상태라서 카페에서 프로젝트 회의에 참석하는 게 걱정이다. 하지만 약속이 있으니 꼭 가야 해. 다른 사람들과의 대화도 필요하고, 이 프로젝트에 대한 의견도 나누고 싶어.",
+        "actionName": "talkToSelf",
+        "content": "이제 카페로 가야겠다. 힘들지만, 프로젝트를 잘 마무리해야 해.",
+        "target": [],
+        "targetLocation": "카페"
+      },
+      "planEndTime": 4143,
+      "lastPlanTime": 4140
     },
     "char2": {
       "id": "char2",
@@ -226,9 +277,9 @@
       "thoughts": "...",
       "conversationId": null,
       "mood": "활기참",
-      "energy": 84.5,
-      "stress": 10,
-      "socialNeed": 98.5,
+      "energy": 85.5,
+      "stress": 0,
+      "socialNeed": 99.5,
       "journal": [
         {
           "timestamp": "2025-09-17T02:32:19.248Z",
@@ -391,22 +442,64 @@
           "description": "A안과 B안의 융합 방안에 대한 논의와 발생할 수 있는 리스크 관리 계획에 대한 구체적인 아이디어가 공유되었다.",
           "poignancy": 8,
           "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:00:46.837Z",
+          "description": "팀원 간의 소통과 효율적인 시간 관리를 주제로 프로젝트 회의 준비에 대한 구체적인 아이디어와 계획을 공유한 대화입니다.",
+          "poignancy": 7,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:09:55.453Z",
+          "description": "피곤한 상태에서 약속 시간을 고려해 각자 집에 가서 쉬기로 결정한 대화.",
+          "poignancy": 5,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:22:17.926Z",
+          "description": "친구들과 함께 약속 장소로 나가기 전에 준비하는 과정에서 기대감과 즐거움을 공유한 대화였다.",
+          "poignancy": 5,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:24:36.771Z",
+          "description": "3일 19:0에 카페 봄에서 '프로젝트에 대한 최종 의견을 정리하고 추가 아이디어를 논의' 약속. (참여자: 강준호, 이수영, 이민지)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T07:24:41.163Z",
+          "description": "프로젝트에 대한 최종 의견과 추가 아이디어를 정리하기 위해 카페에서 만나는 계획을 세우며, 모두가 준비성을 강조했다.",
+          "poignancy": 6,
+          "type": "conversation"
         }
       ],
       "relationships": {
         "이수영": {
-          "affection": 109,
-          "trust": 124
+          "affection": 122,
+          "trust": 142
         },
         "이민지": {
-          "affection": 91,
-          "trust": 148
+          "affection": 93,
+          "trust": 163
         }
       },
       "shortTermGoal": null,
       "dailyPlan": "**아침:** 8시에 출근하여 프로젝트 공모전 자료들을 검토하고,  팀원들과 카페 미팅 장소를 확정하기 위한 최적의 장소 정보를 온라인으로 검색한다.  \n\n**점심:**  팀원들과 미팅 장소로 정해진 카페에서 점심 식사를 하며 프로젝트 아이디어에 대한 구체적인 논의를 진행한다. 효율적인 회의를 위해 미리 정리해 온 자료를 바탕으로 논의를 이끈다.\n\n**저녁:**  오늘 회의 내용을 정리하고, 프로젝트 진행에 필요한 추가 자료들을 찾아 분석한다.  잠시 게임으로 스트레스를 푼 후, 내일을 위한 계획을 세운다.\n",
       "reflectedOnDay": 2,
-      "actionType": "script"
+      "actionType": "script",
+      "currentPlan": {
+        "thoughts": "오늘은 2일이고, 현재 시간은 21:00.  이미 모든 약속은 끝났다. 에너지 레벨도 충분하고 스트레스도 없으니, 이민지와 이수영에게 프로젝트에 대한 최종 의견을 나누는 시간을 갖는 것이 좋겠다. 사회적 욕구도 높으니, 편안한 분위기에서 이야기를 나누는 게 좋을 것 같다. 집에서 하는 것보다 카페에서 하는 게 더 나을 것 같다.  회의 내용을 정리하고, 혹시 추가적인 아이디어가 있으면 얘기해 보자.",
+        "actionName": "startConversation",
+        "content": "이민지, 이수영. 오늘 회의는 모두 끝났지만, 프로젝트에 대한 최종 의견을 정리하고 추가적인 아이디어가 있는지 확인하고 싶어. 카페에서 편하게 이야기할 수 있을까? ",
+        "target": [
+          "이민지",
+          "이수영"
+        ],
+        "targetLocation": "카페"
+      },
+      "planEndTime": 4141,
+      "lastPlanTime": 4140
     },
     "char3": {
       "id": "char3",
@@ -421,9 +514,9 @@
       "thoughts": "...",
       "conversationId": null,
       "mood": "평온",
-      "energy": 51.5,
+      "energy": 57,
       "stress": 0,
-      "socialNeed": 99.5,
+      "socialNeed": 98.5,
       "journal": [
         {
           "timestamp": "2025-09-17T02:32:23.192Z",
@@ -556,28 +649,82 @@
           "description": "A안과 B안의 융합 방안에 대한 리스크 관리와 대응 전략을 논의하며 구체적인 계획 수립의 중요성을 확인했다.",
           "poignancy": 8,
           "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T06:58:03.445Z",
+          "description": "민지가 환경 문제 발표 준비에 어려움을 겪고 있으며, 서로 도와가며 자료를 정리하기로 했다.",
+          "poignancy": 8,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:00:53.730Z",
+          "description": "프로젝트 회의 준비와 관련하여 팀원들의 아이디어와 역할을 조율하며 지원과 배려를 확인하는 대화였다.",
+          "poignancy": 8,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:09:59.332Z",
+          "description": "이민지와 강준호는 피곤한 상태에서 약속을 취소하고 각자 집에 가서 쉬기로 결정했다.",
+          "poignancy": 5,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:22:21.404Z",
+          "description": "이민지와 강준호가 함께 가기로 한 약속 장소와 메뉴에 대해 이야기하며 기대감을 나눴고, 모두의 준비가 마무리되어 출발을 준비하는 모습이 그려졌다.",
+          "poignancy": 5,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:23:00.911Z",
+          "description": "민지가 힘든 상황임에도 약속을 고민하는 모습에 이수영은 그를 위로하고자 하는 마음을 표현했다.",
+          "poignancy": 8,
+          "type": "conversation"
+        },
+        {
+          "timestamp": "2025-09-17T07:24:36.771Z",
+          "description": "3일 19:0에 카페 봄에서 '프로젝트에 대한 최종 의견을 정리하고 추가 아이디어를 논의' 약속. (참여자: 강준호, 이수영, 이민지)",
+          "poignancy": 8,
+          "type": "plan"
+        },
+        {
+          "timestamp": "2025-09-17T07:24:43.895Z",
+          "description": "프로젝트에 대한 최종 의견과 추가 아이디어를 정리하기 위해 카페에서 만날 계획을 세웠다.",
+          "poignancy": 6,
+          "type": "conversation"
         }
       ],
       "relationships": {
         "이민지": {
-          "affection": 170,
-          "trust": 216
+          "affection": 225,
+          "trust": 281
         },
         "강준호": {
-          "affection": 103,
-          "trust": 125
+          "affection": 113,
+          "trust": 145
         }
       },
       "shortTermGoal": null,
       "dailyPlan": "**아침:** 오늘은 이민지 씨와 강준호 씨가 프로젝트 회의를 위해 내 카페를 방문하기로 했으니, 그들이 좋아할 만한 새로운 디저트를 만들어보고, 카페 분위기를 더욱 편안하게 만들도록 정리해야겠어.  원두 향 가득한 맛있는 커피도 준비해야지!\n\n**점심:** 이민지 씨와 강준호 씨가 프로젝트 회의를 마치면 맛있는 점심을 함께 먹으면서  환경 보호 프로젝트에 대해 자연스럽게 이야기를 나누고,  카페를 선택한 이유와 프로젝트 진행에 도움이 될 만한 조언을 해주고 싶어.\n\n**저녁:** 오늘 하루 손님들과 나눈 대화들을 정리하면서  내 카페를 더욱 발전시킬 방법들을 생각해보고,  새로운 디저트 레시피를 연구하며  내일을 위한 준비를 할 거야.  그리고  오늘 만난 이민지 씨와 강준호 씨의 프로젝트가 잘 진행되기를 응원하며 편안한 밤을 보내야지.\n",
       "reflectedOnDay": 2,
-      "actionType": "script"
+      "actionType": "script",
+      "currentPlan": {
+        "thoughts": "오늘은 프로젝트 관련 약속이 많았네. 아직 21시니까 잠깐 휴식을 취하고 나서 강준호 씨와 이민지 씨에게 내일 아침에 프로젝트 최종 자료 검토를 위한 시간을 정하자고 연락해야겠어.  오늘 회의가 늦게까지 이어져서 다들 피곤할 텐데,  내일 아침이면 좀 더 편하게 이야기할 수 있을 거야.  그리고 내일 아침에 만날 시간을 정하기 전에, 오늘 했던 회의 내용을 정리해서 메일로 보내주는 게 좋겠어.  모두가 같은 내용을 공유하고 있어야 혼선이 없으니까.  아, 그리고 내일 카페는 좀 일찍 열어야겠다.  단골 손님들이 좋아하는 새로운 디저트를 만들어서 기분 좋게 하루를 시작하도록 해야지!",
+        "actionName": "sendMessage",
+        "content": "강준호 씨, 이민지 씨, 안녕하세요! 오늘 프로젝트 회의는 정말 길었죠.  다들 피곤하실 테니 내일 아침에 최종 자료 검토를 위한 시간을 따로 정해서 만나요.  시간 가능한 시간대 알려주시면 좋겠어요.  그리고 오늘 회의 내용 정리해서 메일로 보내드릴게요. 편안한 밤 보내세요!",
+        "target": [
+          "강준호",
+          "이민지"
+        ],
+        "targetLocation": "집"
+      },
+      "planEndTime": 4142,
+      "lastPlanTime": 4140
     }
   },
   "situation": {
-    "day": 2,
-    "currentHour": 1,
-    "currentMinute": 0,
+    "day": 3,
+    "currentHour": 2,
+    "currentMinute": 30,
     "allCharacters": [
       {
         "id": "char1",
@@ -586,13 +733,13 @@
         "avatar": "👩‍🎓",
         "personality": "[성격: 내향적이고 창의적임], [가치관: 안정과 성실함], [관심사: 그림 그리기, 미스터리 소설 읽기], [현재 목표: 다가오는 프로젝트 공모전에서 좋은 성과 내기], [특징: 가끔 엉뚱한 상상을 즐김], [좋아하는 것: 단 디저트, 책 읽기]",
         "archetype": "student",
-        "location": "카페",
-        "status": "오전 공부",
-        "currentAction": "도서관에서 일어난 일들을 정리하면서 약속 장소로 이동하기 위해 짐을 챙기고 나간다.",
+        "location": "집",
+        "status": "취침",
+        "currentAction": "취침 중입니다.",
         "thoughts": "...",
         "conversationId": null,
         "mood": "지침",
-        "energy": 18.5,
+        "energy": 3,
         "stress": 100,
         "socialNeed": 99.5,
         "journal": [
@@ -775,16 +922,58 @@
             "description": "A안과 B안의 융합 방안과 발생 가능한 리스크 관리에 대한 구체적인 논의가 이루어졌다.",
             "poignancy": 8,
             "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T06:58:00.069Z",
+            "description": "이민지가 발표 준비에 어려움을 겪고 있지만, 이수영이 도움을 주기로 하며 서로의 자료를 공유하고 협력하기로 약속했다.",
+            "poignancy": 8,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:00:41.794Z",
+            "description": "이민지는 팀의 프로젝트 회의 준비에 대한 아이디어를 공유하며, 피로를 느끼지만 동료들의 지원과 협력으로 회의 준비를 효율적으로 진행하기로 결정했다.",
+            "poignancy": 7,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:09:50.747Z",
+            "description": "강준호와 이수영이 피곤한 상태로 약속 시간을 조정하여 각자 쉬고 나중에 다시 만나는 것으로 결정했다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:22:14.295Z",
+            "description": "이민지와 친구들이 약속 장소로 가기 전 즐거운 대화를 나누고 서로의 기대감을 높이는 모습이 인상적이었다.",
+            "poignancy": 6,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:22:57.383Z",
+            "description": "이수영은 민지의 어려움을 이해하고, 오늘은 약속을 연기하며 민지를 걱정해주는 따뜻한 마음을 전했다.",
+            "poignancy": 8,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:24:36.771Z",
+            "description": "3일 19:0에 카페 봄에서 '프로젝트에 대한 최종 의견을 정리하고 추가 아이디어를 논의' 약속. (참여자: 강준호, 이수영, 이민지)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T07:24:38.214Z",
+            "description": "강준호, 이수영과 함께 프로젝트에 대한 최종 의견을 정리하고 추가 아이디어를 논의하기 위해 카페에서 만나는 계획을 세웠다.",
+            "poignancy": 5,
+            "type": "conversation"
           }
         ],
         "relationships": {
           "이수영": {
-            "affection": 141,
-            "trust": 186
+            "affection": 189,
+            "trust": 252
           },
           "강준호": {
             "affection": 103,
-            "trust": 158
+            "trust": 173
           }
         },
         "shortTermGoal": null,
@@ -794,7 +983,16 @@
         "personalLog": [],
         "isExpanded": false,
         "isInConversation": false,
-        "conversationLockTimer": 0
+        "conversationLockTimer": 0,
+        "currentPlan": {
+          "thoughts": "지금 너무 지치고 스트레스가 높은 상태라서 카페에서 프로젝트 회의에 참석하는 게 걱정이다. 하지만 약속이 있으니 꼭 가야 해. 다른 사람들과의 대화도 필요하고, 이 프로젝트에 대한 의견도 나누고 싶어.",
+          "actionName": "talkToSelf",
+          "content": "이제 카페로 가야겠다. 힘들지만, 프로젝트를 잘 마무리해야 해.",
+          "target": [],
+          "targetLocation": "카페"
+        },
+        "planEndTime": 4143,
+        "lastPlanTime": 4140
       },
       {
         "id": "char2",
@@ -809,9 +1007,9 @@
         "thoughts": "...",
         "conversationId": null,
         "mood": "활기참",
-        "energy": 85,
-        "stress": 12,
-        "socialNeed": 99,
+        "energy": 86,
+        "stress": 0,
+        "socialNeed": 100,
         "journal": [
           {
             "timestamp": "2025-09-17T02:32:19.248Z",
@@ -974,16 +1172,46 @@
             "description": "A안과 B안의 융합 방안에 대한 논의와 발생할 수 있는 리스크 관리 계획에 대한 구체적인 아이디어가 공유되었다.",
             "poignancy": 8,
             "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:00:46.837Z",
+            "description": "팀원 간의 소통과 효율적인 시간 관리를 주제로 프로젝트 회의 준비에 대한 구체적인 아이디어와 계획을 공유한 대화입니다.",
+            "poignancy": 7,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:09:55.453Z",
+            "description": "피곤한 상태에서 약속 시간을 고려해 각자 집에 가서 쉬기로 결정한 대화.",
+            "poignancy": 5,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:22:17.926Z",
+            "description": "친구들과 함께 약속 장소로 나가기 전에 준비하는 과정에서 기대감과 즐거움을 공유한 대화였다.",
+            "poignancy": 5,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:24:36.771Z",
+            "description": "3일 19:0에 카페 봄에서 '프로젝트에 대한 최종 의견을 정리하고 추가 아이디어를 논의' 약속. (참여자: 강준호, 이수영, 이민지)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T07:24:41.163Z",
+            "description": "프로젝트에 대한 최종 의견과 추가 아이디어를 정리하기 위해 카페에서 만나는 계획을 세우며, 모두가 준비성을 강조했다.",
+            "poignancy": 6,
+            "type": "conversation"
           }
         ],
         "relationships": {
           "이수영": {
-            "affection": 109,
-            "trust": 124
+            "affection": 122,
+            "trust": 142
           },
           "이민지": {
-            "affection": 91,
-            "trust": 148
+            "affection": 93,
+            "trust": 163
           }
         },
         "shortTermGoal": null,
@@ -993,7 +1221,19 @@
         "personalLog": [],
         "isExpanded": false,
         "isInConversation": false,
-        "conversationLockTimer": 0
+        "conversationLockTimer": 0,
+        "currentPlan": {
+          "thoughts": "오늘은 2일이고, 현재 시간은 21:00.  이미 모든 약속은 끝났다. 에너지 레벨도 충분하고 스트레스도 없으니, 이민지와 이수영에게 프로젝트에 대한 최종 의견을 나누는 시간을 갖는 것이 좋겠다. 사회적 욕구도 높으니, 편안한 분위기에서 이야기를 나누는 게 좋을 것 같다. 집에서 하는 것보다 카페에서 하는 게 더 나을 것 같다.  회의 내용을 정리하고, 혹시 추가적인 아이디어가 있으면 얘기해 보자.",
+          "actionName": "startConversation",
+          "content": "이민지, 이수영. 오늘 회의는 모두 끝났지만, 프로젝트에 대한 최종 의견을 정리하고 추가적인 아이디어가 있는지 확인하고 싶어. 카페에서 편하게 이야기할 수 있을까? ",
+          "target": [
+            "이민지",
+            "이수영"
+          ],
+          "targetLocation": "카페"
+        },
+        "planEndTime": 4141,
+        "lastPlanTime": 4140
       },
       {
         "id": "char3",
@@ -1002,15 +1242,15 @@
         "avatar": "👩‍💼",
         "personality": "[성격: 사교적이고 공감 능력이 뛰어남], [가치관: 관계와 즐거움], [관심사: 새로운 디저트 만들기, 동네 사람들과 수다 떨기], [현재 목표: 가게의 단골 손님 늘리기], [특징: 다른 사람의 고민을 잘 들어줌], [좋아하는 것: 원두 냄새, 디저트 장식하기], [행동 방식: 나는 사람들과의 관계를 가장 중요하게 생각해. 갈등이 생기는 걸 싫어해서 어떻게든 좋게 해결하려고 노력하는 편이야. 가끔은 너무 남을 신경 쓰다가 내 에너지가 방전될 때도 있지만, 그래도 다른 사람이 행복해하는 모습을 보면 나도 행복해져. 만약 내가 약속에 늦거나 실수를 했다면, 상대방의 기분이 상했을까 봐 몇 번이고 미안하다고 표현하며 관계를 회복하려고 애쓸 거야.]",
         "archetype": "storeOwner",
-        "location": "카페",
-        "status": "기상 및 오픈 준비",
-        "currentAction": "기상 및 오픈 준비 중입니다.",
+        "location": "집",
+        "status": "취침",
+        "currentAction": "취침 중입니다.",
         "thoughts": "...",
         "conversationId": null,
         "mood": "평온",
-        "energy": 52,
+        "energy": 57.5,
         "stress": 0,
-        "socialNeed": 100,
+        "socialNeed": 99,
         "journal": [
           {
             "timestamp": "2025-09-17T02:32:23.192Z",
@@ -1143,16 +1383,58 @@
             "description": "A안과 B안의 융합 방안에 대한 리스크 관리와 대응 전략을 논의하며 구체적인 계획 수립의 중요성을 확인했다.",
             "poignancy": 8,
             "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T06:58:03.445Z",
+            "description": "민지가 환경 문제 발표 준비에 어려움을 겪고 있으며, 서로 도와가며 자료를 정리하기로 했다.",
+            "poignancy": 8,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:00:53.730Z",
+            "description": "프로젝트 회의 준비와 관련하여 팀원들의 아이디어와 역할을 조율하며 지원과 배려를 확인하는 대화였다.",
+            "poignancy": 8,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:09:59.332Z",
+            "description": "이민지와 강준호는 피곤한 상태에서 약속을 취소하고 각자 집에 가서 쉬기로 결정했다.",
+            "poignancy": 5,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:22:21.404Z",
+            "description": "이민지와 강준호가 함께 가기로 한 약속 장소와 메뉴에 대해 이야기하며 기대감을 나눴고, 모두의 준비가 마무리되어 출발을 준비하는 모습이 그려졌다.",
+            "poignancy": 5,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:23:00.911Z",
+            "description": "민지가 힘든 상황임에도 약속을 고민하는 모습에 이수영은 그를 위로하고자 하는 마음을 표현했다.",
+            "poignancy": 8,
+            "type": "conversation"
+          },
+          {
+            "timestamp": "2025-09-17T07:24:36.771Z",
+            "description": "3일 19:0에 카페 봄에서 '프로젝트에 대한 최종 의견을 정리하고 추가 아이디어를 논의' 약속. (참여자: 강준호, 이수영, 이민지)",
+            "poignancy": 8,
+            "type": "plan"
+          },
+          {
+            "timestamp": "2025-09-17T07:24:43.895Z",
+            "description": "프로젝트에 대한 최종 의견과 추가 아이디어를 정리하기 위해 카페에서 만날 계획을 세웠다.",
+            "poignancy": 6,
+            "type": "conversation"
           }
         ],
         "relationships": {
           "이민지": {
-            "affection": 170,
-            "trust": 216
+            "affection": 225,
+            "trust": 281
           },
           "강준호": {
-            "affection": 103,
-            "trust": 125
+            "affection": 113,
+            "trust": 145
           }
         },
         "shortTermGoal": null,
@@ -1162,7 +1444,19 @@
         "personalLog": [],
         "isExpanded": false,
         "isInConversation": false,
-        "conversationLockTimer": 0
+        "conversationLockTimer": 0,
+        "currentPlan": {
+          "thoughts": "오늘은 프로젝트 관련 약속이 많았네. 아직 21시니까 잠깐 휴식을 취하고 나서 강준호 씨와 이민지 씨에게 내일 아침에 프로젝트 최종 자료 검토를 위한 시간을 정하자고 연락해야겠어.  오늘 회의가 늦게까지 이어져서 다들 피곤할 텐데,  내일 아침이면 좀 더 편하게 이야기할 수 있을 거야.  그리고 내일 아침에 만날 시간을 정하기 전에, 오늘 했던 회의 내용을 정리해서 메일로 보내주는 게 좋겠어.  모두가 같은 내용을 공유하고 있어야 혼선이 없으니까.  아, 그리고 내일 카페는 좀 일찍 열어야겠다.  단골 손님들이 좋아하는 새로운 디저트를 만들어서 기분 좋게 하루를 시작하도록 해야지!",
+          "actionName": "sendMessage",
+          "content": "강준호 씨, 이민지 씨, 안녕하세요! 오늘 프로젝트 회의는 정말 길었죠.  다들 피곤하실 테니 내일 아침에 최종 자료 검토를 위한 시간을 따로 정해서 만나요.  시간 가능한 시간대 알려주시면 좋겠어요.  그리고 오늘 회의 내용 정리해서 메일로 보내드릴게요. 편안한 밤 보내세요!",
+          "target": [
+            "강준호",
+            "이민지"
+          ],
+          "targetLocation": "집"
+        },
+        "planEndTime": 4142,
+        "lastPlanTime": 4140
       }
     ]
   },
