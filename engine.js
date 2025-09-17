@@ -1,129 +1,117 @@
-// 📍 engine.js (수정 버전)
+// 📍 engine.js 시간만 흐르게 하고 모든 캐릭터에게 "이제 뭐 할지 생각하세요!" 라고 지시만 내리는 '심장' 역할
+// "캐릭터들이 이런 행동들을 하려고 합니다" 라는 계획서 묶음을 inputHandler.js에게 전달하는 역할
 
 const { processActions } = require('./inputHandler.js');
-const { runAgent } = require('./simulation.js');
+const { think } = require('./ai.js');
 const { updateCharacterStats } = require('./status.js');
-const { createMemoryFromConversation } = require('./memory.js');
+const { createMemoryFromConversation, retrieveMemories } = require('./memory.js');
 const { createPlanFromConversation } = require('./planning.js');
 const { updateRelationshipFromConversation } = require('./relationships.js');
+const { loadWorld, saveWorld, initializeWorld } = require('./database.js');
+const { callLLM } = require('./llm.js');
 
-
-async function runEngineStep(worldState) {
-    const previousConversations = worldState.activeConversations.map(c => ({...c}));
-
-    const agentActions = [];
-    for (const character of Object.values(worldState.characterDatabase)) {
-        const action = await runAgent(character, worldState);
-        agentActions.push({ ...action, charId: character.id });
-    }
-    console.log("\n--- [1단계: 모든 캐릭터 액션 생성 완료] ---");
-    agentActions.forEach(action => {
-        const charName = worldState.characterDatabase[action.charId]?.name || '???';
-        console.log(`  - ${charName}: ${action.actionName} - "${(action.content || '').substring(0, 50)}..."`);
-    });
-
-    console.log("\n--- [2단계: 액션 일괄 처리 시작] ---");
-    const { actionLogs } = processActions(agentActions, worldState);
-
-    console.log("\n--- [3단계: 캐릭터 스탯 업데이트] ---");
-    for (const character of Object.values(worldState.characterDatabase)) {
-        const plan = agentActions.find(p => p.charId === character.id);
-        updateCharacterStats(character, plan);
+// [추가] World 클래스를 새로 만듭니다. 시뮬레이션의 모든 것을 관리합니다.
+class World {
+    constructor() {
+        // 서버가 시작될 때 database.js를 통해 저장된 파일이 있으면 불러오고, 없으면 새로 시작합니다.
+        const worldData = loadWorld() || initializeWorld();
+        this.characterDatabase = worldData.characterDatabase;
+        this.situation = worldData.situation;
+        this.activeConversations = worldData.activeConversations;
+        this.messageQueue = worldData.messageQueue;
+        this.llmConfigs = worldData.llmConfigs || {};
     }
 
-    console.log("\n--- [4단계: 종료된 대화 처리] ---");
-    const endedConversations = previousConversations.filter(
-        prevConv => prevConv.isActive && !worldState.activeConversations.some(newConv => newConv.id === prevConv.id)
-    );
+    // 월드 데이터를 파일에 저장하는 기능입니다.
+    save() {
+        const worldData = {
+            characterDatabase: this.characterDatabase,
+            situation: this.situation,
+            activeConversations: this.activeConversations,
+            messageQueue: this.messageQueue,
+            llmConfigs: this.llmConfigs,
+        };
+        saveWorld(worldData);
+    }
 
-    for (const endedConv of endedConversations) {
-        console.log(`  - 대화(${endedConv.id})가 종료되어 기억과 약속을 처리합니다.`);
-        const firstId = (endedConv.participantHistory && endedConv.participantHistory[0]) || (endedConv.participants && endedConv.participants[0]);
-        const provider = (firstId && worldState.llmConfigs[firstId]?.provider) || 'gemini';
+    // --- '성찰' 기능 ---
+    async reflectOnMemories(character) {
+        const recentMemories = character.journal.slice(-20);
+        if (recentMemories.length < 5) return;
+        const memoryDescriptions = recentMemories.map(m => `- ${m.description}`).join('\n');
+        const prompt = `당신은 '${character.name}'입니다. 다음은 당신의 최근 기억 목록입니다.
+        [최근 기억]
+        ${memoryDescriptions}
+        [임무]
+        위 기억들을 바탕으로, 당신 자신이나 다른 사람과의 관계에 대해 얻게 된 중요한 깨달음이나 성찰 2~3가지를 요약하세요.`;
 
-
-        const newPlan = await createPlanFromConversation(endedConv, worldState.characterDatabase, provider, worldState.situation);
-        if (newPlan && newPlan.participants) {
-            console.log(`  [약속 기록!] ${newPlan.day}일차 ${newPlan.hour}:${newPlan.minute} ${newPlan.location}에서 "${newPlan.activity}"`);
-            const planMemory = {
-                timestamp: new Date().toISOString(), // 약속 시간을 미래로 설정해야 함
-                description: `${newPlan.day}일 ${newPlan.hour}:${newPlan.minute}에 ${newPlan.location}에서 '${newPlan.activity}' 약속. (참여자: ${newPlan.participants.join(', ')})`,
-                poignancy: newPlan.poignancy,
-                type: 'plan',
+        try {
+            const provider = this.llmConfigs[character.id]?.provider || 'gemini';
+            const reflectionText = await callLLM(prompt, provider);
+            const newMemory = {
+                timestamp: new Date().toISOString(),
+                description: `(성찰): ${reflectionText}`,
+                poignancy: 8,
+                type: 'reflection',
             };
-            newPlan.participants.forEach(name => {
-                const char = Object.values(worldState.characterDatabase).find(c => c.name === name);
-                if (char) char.journal.push(planMemory);
-            });
+            character.journal.push(newMemory);
+            console.log(`[성찰 생성] ${character.name}: ${reflectionText}`);
+        } catch (error) {
+            console.error(`[성찰 생성 오류] ${character.name}:`, error);
         }
-
-        for (const participantId of endedConv.participantHistory) {
-            const character = worldState.characterDatabase[participantId];
-            if (character) {
-                const newMemory = await createMemoryFromConversation(character, endedConv, worldState.characterDatabase, provider);
-                if (newMemory) {
-                    character.journal.push(newMemory);
-                    // ⭐ 중요도(poignancy)를 함께 로그에 출력하도록 수정!
-                    console.log(`    - ${character.name}의 기억 생성: "${newMemory.description}" (중요도: ${newMemory.poignancy})`);
-                }
-            }
-            // — 관계 업데이트 (양방향) —
-            const ids = endedConv.participants || endedConv.participantHistory || [];
-            for (let i = 0; i < ids.length; i++) {
-            for (let j = i + 1; j < ids.length; j++) {
-                const a = worldState.characterDatabase[ids[i]];
-                const b = worldState.characterDatabase[ids[j]];
-                if (!a || !b) continue;
-
-                const deltaAB = await updateRelationshipFromConversation(a, b, endedConv, worldState.characterDatabase, provider);
-                const deltaBA = await updateRelationshipFromConversation(b, a, endedConv, worldState.characterDatabase, provider);
-
-                if (deltaAB) {
-                a.relationships[b.name] = a.relationships[b.name] || { affection: 50, trust: 50 };
-                a.relationships[b.name].affection += deltaAB.affectionChange;
-                a.relationships[b.name].trust     += deltaAB.trustChange;
-                console.log(`    - 관계 변화 ${a.name}→${b.name}: ❤️ ${deltaAB.affectionChange}, 🤝 ${deltaAB.trustChange}`);
-                }
-                if (deltaBA) {
-                b.relationships[a.name] = b.relationships[a.name] || { affection: 50, trust: 50 };
-                b.relationships[a.name].affection += deltaBA.affectionChange;
-                b.relationships[a.name].trust     += deltaBA.trustChange;
-                console.log(`    - 관계 변화 ${b.name}→${a.name}: ❤️ ${deltaBA.affectionChange}, 🤝 ${deltaBA.trustChange}`);
-                }
-            }
-        }
-
+    }
+    // --- 일일 계획 ---
+    async createDailyPlan(character) {
+        const situationContext = { nearbyCharacterNames: [] };
+        const relevantMemories = retrieveMemories(character, situationContext).slice(0, 5);
+        const memoryContext = relevantMemories.map(m => `- ${m.description}`).join('\n');
+        const prompt = `당신은 '${character.name}'입니다. 당신의 기본 정보와 최근 성찰은 다음과 같습니다.\n[기본 정보]\n- 역할: ${character.role}\n- 성격: ${character.personality}\n\n[최근 중요 기억/성찰]\n${memoryContext}\n\n[임무]\n위 정보를 바탕으로, 오늘 하루 동안 무엇을 할지에 대한 대략적인 계획을 아침/점심/저녁으로 나누어 한두 문장으로 작성하세요.`;
+        try {
+            const provider = this.llmConfigs[character.id]?.provider || 'gemini';
+            const planText = await callLLM(prompt, provider);
+            character.dailyPlan = planText;
+            console.log(`[일일 계획 생성] ${character.name}: ${planText}`);
+        } catch (error) {
+            console.error(`[일일 계획 생성 오류] ${character.name}:`, error);
         }
     }
 
-    // --- ⭐ 5단계: 최종 결과 출력 (로직 개선) ---
-    const { day, currentHour, currentMinute } = worldState.situation;
-    const dayOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'][(day) % 7];
-    console.log(`\n--- [${day}일차 (${dayOfWeek}) ${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}] ---`);
-
-    for (const character of Object.values(worldState.characterDatabase)) {
-        let displayText = '';
-        const log = actionLogs.find(l => l.charId === character.id);
-
-        if (log) {
-            displayText = log.description;
-        } else if (character.conversationId) {
-            // ⭐ 대화 중인데 별도 로그가 없다면 '듣는 중'으로 표시
-            const currentConv = worldState.activeConversations.find(c => c.id === character.conversationId);
-            if(currentConv) {
-                 displayText = `${currentConv.participants.map(pId => worldState.characterDatabase[pId]?.name).join(', ')}의 대화를 듣고 있습니다.`;
-            }
-        } else {
-            // ⭐ 대화 중이 아닐 때만 스크립트 행동 표시
-            const scriptAction = agentActions.find(a => a.charId === character.id && a.actionName === 'script');
-            if (scriptAction && scriptAction.content) {
-                displayText = scriptAction.content;
-            } else {
-                displayText = '대기 중...';
+    // [이동] 기존의 runEngineStep 함수의 모든 내용이 이 안으로 들어왔습니다.
+    // 이제 this 대신 'this'를 사용해 자기 자신의 데이터에 접근합니다.
+    async nextTurn() {
+        // [추가] 매일 자정이 되면 모든 캐릭터가 성찰하고 계획을 세웁니다.
+        if (this.situation.currentHour === 0 && this.situation.currentMinute < 30) {
+            for (const character of Object.values(this.characterDatabase)) {
+                if (character.reflectedOnDay !== this.situation.day) {
+                    await this.reflectOnMemories(character);
+                    await this.createDailyPlan(character);
+                    character.reflectedOnDay = this.situation.day;
+                }
             }
         }
-        console.log(`  - [${character.location}] ${character.name}: ${displayText}`);
+
+        // AI를 통해 모든 캐릭터의 행동 계획 수집
+        const agentActions = [];
+        for (const character of Object.values(this.characterDatabase)) {
+            const action = await think(character, this);
+            agentActions.push({ ...action, charId: character.id });
+        }
+        console.log("\n--- [1단계: 모든 캐릭터 액션 생성 완료] ---");
+        agentActions.forEach(action => {
+            const charName = this.characterDatabase[action.charId]?.name || '???';
+            console.log(`  - ${charName}: ${action.actionName} - "${(action.content || '').substring(0, 50)}..."`);
+        });
+
+        console.log("\n--- [2단계: 액션 일괄 처리 시작] ---");
+        await processActions(agentActions, this);
+
+        console.log("\n--- [3단계: 캐릭터 스탯 업데이트] ---");
+        for (const character of Object.values(this.characterDatabase)) {
+            const plan = agentActions.find(p => p.charId === character.id);
+            updateCharacterStats(character, plan);
+        }
+        
     }
 }
 
-module.exports = { runEngineStep };
+module.exports = { World };

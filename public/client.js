@@ -2,23 +2,16 @@
 // [1] 전역 상태 변수 (Global State)
 // =======================================================================
 let gameState = {
-    isRunning: false,
-    currentTime: 8,
-    currentMinute: 0,
-    day: 1,
+    isRunning: false, // UI 업데이트를 계속할지 여부만 제어
     llmConfigs: {},
-    aiCallsToday: 0,
-    scriptCallsToday: 0,
-    llmStats: { gemini: 0, gpt: 0 },
     characters: {},
     mainEvents: []
 };
-let simulationInterval;
+let uiUpdateInterval;
 
 // =======================================================================
 // [2] 초기화 및 메인 이벤트 리스너
 // =======================================================================
-
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('startBtn').addEventListener('click', startSimulation);
     document.getElementById('pauseBtn').addEventListener('click', pauseSimulation);
@@ -33,29 +26,17 @@ async function initializeSimulationData() {
         
         const data = await response.json();
         
+        // 초기 캐릭터 데이터 설정
         for (const charId in data.characters) {
-            const charData = data.characters[charId];
-            gameState.characters[charId] = {
-                ...charData,
-                mood: charData.mood || '평온',
-                energy: charData.energy || 100,
-                stress: charData.stress || 10,
-                socialNeed: charData.socialNeed || 50,
-                currentAction: '대기 중...',
-                thoughts: '...',
-                personalLog: [],
-                isExpanded: false,
-                actionType: 'script',
-                isInConversation: false,
-                conversationLockTimer: 0,
-                relationships: charData.relationships || {}
-            };
+            gameState.characters[charId] = { ...data.characters[charId], isExpanded: false };
         }
+        
+        // 초기 시간 및 기타 정보 설정
+        gameState.situation = data.situation;
         
         updateTimeDisplay();
         updateCharacterCount();
         generateLLMConfigUI();
-        updateAIStats();
         updateCharacterCards();
 
     } catch (error) {
@@ -64,125 +45,92 @@ async function initializeSimulationData() {
 }
 
 // =======================================================================
-// [3] 시뮬레이션 제어
+// [3] 시뮬레이션 제어 (이제 UI 업데이트만 제어)
 // =======================================================================
-
-let simulationTimeout; // 타이머를 제어하기 위한 변수
-
 function startSimulation() {
     gameState.isRunning = true;
     document.getElementById('startBtn').disabled = true;
     document.getElementById('pauseBtn').disabled = false;
+    document.getElementById('simulationStatus').textContent = '실행 중';
     
-    addMainEvent('🚀 시뮬레이션이 시작되었습니다!', 'event');
-    
-    // 틱을 처리하는 gameLoop를 처음 호출합니다.
-    gameLoop();
-}
-
-// processTimeStep의 역할을 하는 새로운 함수입니다.
-async function gameLoop() {
-    // 시뮬레이션이 실행 중일 때만 다음 틱을 진행합니다.
-    if (!gameState.isRunning) return;
-
-    await processTimeStep(); // 기존의 시간 처리 로직을 실행
-
-    // 작업이 끝난 후, 5초 뒤에 자기 자신(gameLoop)을 다시 호출하도록 예약합니다.
-    simulationTimeout = setTimeout(gameLoop, 5000);
+    // 3초마다 UI 업데이트 시작
+    fetchWorldStateAndUpdateUI(); // 즉시 한 번 실행
+    uiUpdateInterval = setInterval(fetchWorldStateAndUpdateUI, 3000); // 3초 간격
 }
 
 function pauseSimulation() {
     gameState.isRunning = false;
-    clearTimeout(simulationTimeout); // 예약된 다음 호출을 취소합니다.
     document.getElementById('startBtn').disabled = false;
     document.getElementById('pauseBtn').disabled = true;
-    addMainEvent('⏸️ 시뮬레이션이 일시정지되었습니다.', 'event');
+    document.getElementById('simulationStatus').textContent = '일시정지';
+    clearInterval(uiUpdateInterval); // UI 업데이트 중단
 }
 
 async function resetSimulation() {
-    if (!confirm('정말로 시뮬레이션을 초기화하시겠습니까? 모든 데이터가 사라집니다.')) {
-        return;
-    }
+    if (!confirm('정말로 시뮬레이션을 초기화하시겠습니까? 모든 데이터가 사라집니다.')) return;
     
     pauseSimulation();
     
     try {
-        const response = await fetch('/api/reset-simulation', { method: 'POST' });
-        if (!response.ok) {
-            throw new Error('서버 리셋에 실패했습니다.');
-        }
-        console.log('서버 데이터 리셋 완료. 페이지를 새로고침합니다.');
-        location.reload();
+        await fetch('/api/reset-simulation', { method: 'POST' });
+        location.reload(); // 페이지 새로고침으로 초기화
     } catch (error) {
         console.error('리셋 오류:', error);
-        alert('리셋 중 오류가 발생했습니다.');
     }
 }
 
 // =======================================================================
-// [4] 시뮬레이션 코어 로직
+// [4] 서버 데이터 요청 및 UI 업데이트 핵심 로직
 // =======================================================================
-
-async function processTimeStep() {
+async function fetchWorldStateAndUpdateUI() {
     if (!gameState.isRunning) return;
-    
-    gameState.currentMinute += 30;
-    if (gameState.currentMinute >= 60) {
-        gameState.currentMinute = 0;
-        gameState.currentTime++;
-        if (gameState.currentTime >= 24) {
-            gameState.currentTime = 0;
-            gameState.day++;
-            addMainEvent(`🌅 ${gameState.day}일차 아침이 밝았습니다.`, 'event');
-        }
-    }
-    
-    updateTimeDisplay();
-    updateAIStats();
 
     try {
-        const characterIds = Object.keys(gameState.characters);
-        const situation = {
-            day: gameState.day,
-            currentHour: gameState.currentTime,
-            currentMinute: gameState.currentMinute, // 👈 이 부분이 추가되었습니다.
-            allCharacters: Object.values(gameState.characters)
-        };
-
-        gameState.llmConfigs = getLLMConfigs();
-
-        const response = await fetch('/api/character-update', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ characterIds, situation, llmConfigs: gameState.llmConfigs })
-        });
+        const response = await fetch('/api/get-world-state');
+        if (!response.ok) throw new Error('서버 상태 가져오기 실패');
         
-        if (!response.ok) throw new Error('서버 업데이트 실패');
-        
-        const { updates } = await response.json();
-
-        for (const charId in updates) {
-            const update = updates[charId];
-            gameState.characters[charId] = { ...gameState.characters[charId], ...update };
-            
-            updateStatistics(update.actionType, charId);
-
-            if (update.interactionLog) {
-                addInteractionLog(update.interactionLog);
+        // [핵심 수정] 데이터를 통째로 덮어쓰는 대신, 캐릭터별로 업데이트합니다.
+        for (const charId in serverWorld.characters) {
+            const serverChar = serverWorld.characters[charId];
+            if (gameState.characters[charId]) {
+                // 기존 캐릭터 정보에 서버에서 받은 최신 정보를 합칩니다.
+                // 이렇게 하면 isExpanded 같은 클라이언트 상태가 유지됩니다.
+                Object.assign(gameState.characters[charId], serverChar);
+            } else {
+                // 시뮬레이션 도중 새로 추가된 캐릭터 처리
+                gameState.characters[charId] = { ...serverChar, isExpanded: false };
             }
         }
 
-    } catch (error) {
-        console.error("타임스텝 처리 오류:", error);
-        pauseSimulation();
-    }
+        // 서버에서 받은 최신 데이터로 클라이언트의 gameState를 덮어씁니다.
+        gameState.situation = serverWorld.situation;
+        gameState.mainEvents = serverWorld.mainEvents;
 
+        // 화면을 새로 그립니다.
+        updateAllUI();
+
+    } catch (error) {
+        console.error("월드 상태 업데이트 오류:", error);
+        pauseSimulation(); // 오류 발생 시 업데이트 중지
+    }
+}
+
+function updateAllUI() {
+    updateTimeDisplay();
     updateCharacterCards();
+    // updateMainLog(); // mainLog는 아직 서버에서 오지 않으므로 추후 추가
 }
 
 // =======================================================================
 // [5] UI 렌더링 및 유틸리티
 // =======================================================================
+function updateTimeDisplay() {
+    if (!gameState.situation) return;
+    const { day, currentHour, currentMinute } = gameState.situation;
+    const timeDisplay = document.getElementById('timeDisplay');
+    if (!timeDisplay) return;
+    timeDisplay.textContent = `시간: ${currentHour}:${String(currentMinute).padStart(2, '0')} (${day}일차)`;
+}
 
 function getLLMConfigs() {
     const configs = {};
@@ -196,8 +144,15 @@ function getLLMConfigs() {
 function updateCharacterCards() {
     const grid = document.getElementById('charactersGrid');
     if (!grid) return;
+    // 캐릭터 카드를 다시 그릴 때, 현재 DOM에 있는 카드의 isExpanded 상태를 gameState에 먼저 저장합니다.
+    const expandedStates = {};
+    document.querySelectorAll('.character-card').forEach(card => {
+        expandedStates[card.dataset.charId] = card.classList.contains('expanded');
+    });
     grid.innerHTML = '';
     Object.values(gameState.characters).forEach(character => {
+        // 저장해둔 expanded 상태를 다시 적용합니다.
+        character.isExpanded = expandedStates[character.id] || false;
         grid.appendChild(createCharacterCard(character));
     });
 }
@@ -205,15 +160,17 @@ function updateCharacterCards() {
 function createCharacterCard(character) {
     const card = document.createElement('div');
     card.className = `character-card ${character.isExpanded ? 'expanded' : ''}`;
-    
-    let actionTypeText = character.actionType === 'script' ? '스크립트' : 'AI';
+    card.dataset.charId = character.id; // 캐릭터 ID를 데이터 속성으로 저장
+
+     const actionType = character.actionType || 'script';
+    let actionTypeText = actionType === 'script' ? '스크립트' : 'AI';
 
     // 관계 정보 표시
     let relationshipSummary = '';
     if (character.relationships && Object.keys(character.relationships).length > 0) {
         const relationshipCount = Object.keys(character.relationships).length;
         const avgAffection = Object.values(character.relationships).reduce((sum, rel) => sum + rel.affection, 0) / relationshipCount;
-        relationshipSummary = `<div class="relationship-summary">관계: ${relationshipCount}명 (평균 호감도: ${Math.round(avgAffection)})</div>`;
+        relationshipSummary = `<div class="relationship-summary">관계: ${relationshipCount}명 </div>`;
     }
 
     card.innerHTML = `
@@ -287,6 +244,58 @@ function createCharacterCard(character) {
     return card;
 }
 
+function toggleCharacter(characterId) {
+    if (gameState.characters[characterId]) {
+        gameState.characters[characterId].isExpanded = !gameState.characters[characterId].isExpanded;
+        updateCharacterCards();
+    }
+}
+
+function generateLLMConfigUI() {
+    const container = document.getElementById('characterLLMGrid');
+    if (!container) return;
+    container.innerHTML = ''; 
+    Object.values(gameState.characters).forEach(character => {
+        const selectWrapper = document.createElement('div');
+        // ⭐ 수정: div에 CSS 클래스를 추가하여 스타일 관리를 용이하게 합니다.
+        selectWrapper.className = 'llm-config-item'; 
+        
+        // ⭐ 수정: gemini를 제거하고 Gemini를 추가하며, Gemini를 기본 선택으로 설정합니다.
+        // UI도 더 명확하게 라벨과 select로 분리합니다.
+        selectWrapper.innerHTML = `
+            <label for="${character.id}LLM">${character.name}</label>
+            <select id="${character.id}LLM">
+                <option value="gemini" selected>Gemini</option>
+                <option value="gpt">GPT</option>
+            </select>`;
+        container.appendChild(selectWrapper);
+    });
+}
+
+function updateTimeDisplay() {
+    const timeDisplay = document.getElementById('timeDisplay');
+    if (!timeDisplay) return;
+    const h = gameState.currentTime;
+    const m = gameState.currentMinute.toString().padStart(2, '0');
+    timeDisplay.textContent = `시간: ${h}:${m} (${gameState.day}일차)`;
+}
+
+function updateMainLog() {
+    const mainLog = document.getElementById('mainLog');
+    if (!mainLog) return;
+    mainLog.innerHTML = gameState.mainEvents.map(event => `
+        <div class="log-entry ${event.type}">
+            <div class="log-timestamp">${event.time}</div>
+            <div class="log-content">${event.content}</div>
+        </div>
+    `).join('') || '<div>이벤트가 없습니다.</div>';
+}
+
+function updateCharacterCount() {
+    const charCount = document.getElementById('characterCount');
+    if (charCount) charCount.textContent = `(${Object.keys(gameState.characters).length}명)`;
+}
+
 function createRelationshipSection(character) {
     if (!character.relationships || Object.keys(character.relationships).length === 0) {
         return `
@@ -336,43 +345,6 @@ function createRelationshipSection(character) {
     return relationshipHTML;
 }
 
-function toggleCharacter(characterId) {
-    const character = gameState.characters[characterId];
-    if (character) {
-        character.isExpanded = !character.isExpanded;
-        updateCharacterCards();
-    }
-}
-
-function generateLLMConfigUI() {
-    const container = document.getElementById('characterLLMGrid');
-    if (!container) return;
-    container.innerHTML = ''; 
-    Object.values(gameState.characters).forEach(character => {
-        const selectWrapper = document.createElement('div');
-        // ⭐ 수정: div에 CSS 클래스를 추가하여 스타일 관리를 용이하게 합니다.
-        selectWrapper.className = 'llm-config-item'; 
-        
-        // ⭐ 수정: gemini를 제거하고 Gemini를 추가하며, Gemini를 기본 선택으로 설정합니다.
-        // UI도 더 명확하게 라벨과 select로 분리합니다.
-        selectWrapper.innerHTML = `
-            <label for="${character.id}LLM">${character.name}</label>
-            <select id="${character.id}LLM">
-                <option value="gemini" selected>Gemini</option>
-                <option value="gpt">GPT</option>
-            </select>`;
-        container.appendChild(selectWrapper);
-    });
-}
-
-function updateTimeDisplay() {
-    const timeDisplay = document.getElementById('timeDisplay');
-    if (!timeDisplay) return;
-    const h = gameState.currentTime;
-    const m = gameState.currentMinute.toString().padStart(2, '0');
-    timeDisplay.textContent = `시간: ${h}:${m} (${gameState.day}일차)`;
-}
-
 function addMainEvent(message, type) {
     const timeStr = `${gameState.currentTime.toString().padStart(2, '0')}:${gameState.currentMinute.toString().padStart(2, '0')}`;
     gameState.mainEvents.unshift({ time: timeStr, content: message, type });
@@ -405,22 +377,6 @@ function addInteractionLog(log) {
     if (message) {
         addMainEvent(message, 'conversation');
     }
-}
-
-function updateMainLog() {
-    const mainLog = document.getElementById('mainLog');
-    if (!mainLog) return;
-    mainLog.innerHTML = gameState.mainEvents.map(event => `
-        <div class="log-entry ${event.type}">
-            <div class="log-timestamp">${event.time}</div>
-            <div class="log-content">${event.content}</div>
-        </div>
-    `).join('') || '<div>이벤트가 없습니다.</div>';
-}
-
-function updateCharacterCount() {
-    const charCount = document.getElementById('characterCount');
-    if (charCount) charCount.textContent = `(${Object.keys(gameState.characters).length}명)`;
 }
 
 function updateStatistics(actionType, characterId) {
