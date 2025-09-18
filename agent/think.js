@@ -1,14 +1,128 @@
-// 📍 ai.js 캐릭터 한 명의 생각만 깊게 파고들어 "저는 이렇게 행동하겠습니다" 라는 계획서 하나만 반환하는 '두뇌' 역할
-const { callLLM } = require('./llm.js');
-const { retrieveMemories } = require('./memory.js');
-const { scenarios, locations } = require('./scenarios.js');
+// agent/think.js
+const { observe, buildContext } = require('./observe.js');
+const { retrieveMemories } = require('../agent/memory.js');
+const { callLLM } = require('../utils/llm.js');
+const { scenarios, locations } = require('../core/scenarios.js');
+const { searchRelevantMemories } = require('./memory.js');
 const activeScenarioName = 'modern';
+
+// ⭐ 새로 추가: 메인 에이전트 틱 함수
+async function agentTick(character, world) {
+    // 1단계: 관찰
+    const observations = observe(character, world);
+    console.log(`[에이전트 틱] ${character.name} - 1단계: 관찰 완료`);
+    
+    // 2단계: 상황 파악
+    const context = buildContext(character, observations);
+    console.log(`[에이전트 틱] ${character.name} - 2단계: 상황 파악 완료`);
+    
+    // 3단계: 장기적 사고 (성찰, 계획)
+    await handleLongTermThinking(character, world);
+    console.log(`[에이전트 틱] ${character.name} - 3단계: 장기적 사고 완료`);
+    
+    // 4단계: 즉시 행동 결정
+    const plan = await makeImmediateDecision(character, world, context, observations);
+    console.log(`[에이전트 틱] ${character.name} - 4단계: 행동 결정 완료`);
+    
+    return plan;
+}
+
+// ⭐ 새로 추가: 장기적 사고 처리
+async function handleLongTermThinking(character, world) {
+    const { situation } = world;
+    
+    // 자정 무렵 성찰 및 일일계획
+    if (situation.currentHour === 0 && situation.currentMinute < 30 && character.reflectedOnDay !== situation.day) {
+        await reflectOnMemories(character, world);
+        await createDailyPlan(character, world);
+        character.reflectedOnDay = situation.day;
+        console.log(`[장기적 사고] ${character.name} - 성찰 및 일일계획 완료`);
+    }
+}
+
+// ⭐ 새로 추가: 즉시 행동 결정
+async function makeImmediateDecision(character, world, context, observations) {
+    // 대화 중인지 확인
+    if (observations.myConversation) {
+        if (observations.myConversation.turnHolder === character.id) {
+            console.log(`[행동 결정] ${character.name} - 대화 응답 생성`);
+            return await generateConversationResponse(character, world);
+        } else {
+            console.log(`[행동 결정] ${character.name} - 대화 듣기`);
+            return {
+                actionName: 'listen',
+                content: `${observations.myConversation.participants.join(', ')}의 대화를 듣고 있습니다.`
+            };
+        }
+    }
+
+    // 자유 행동 결정
+    if (shouldUseAI(character, world)) {
+        console.log(`[행동 결정] ${character.name} - AI 모드로 자유 행동`);
+        return await generateFreeAction(character, world);
+    } else {
+        console.log(`[행동 결정] ${character.name} - 스크립트 모드`);
+        const scriptPlan = processWithScript(character, world.situation);
+        return {
+            actionName: 'script',
+            location: scriptPlan.location,
+            status: scriptPlan.status,
+            content: scriptPlan.content,
+            thoughts: scriptPlan.thoughts
+        };
+    }
+}
+
+async function runAgent(character, world) {
+    return await agentTick(character, world);
+}
+
+// async function runAgent(character, world) {
+//     // 1. 관찰 단계
+//     const observations = observe(character, world);
+//     const context = buildContext(character, observations);
+    
+//     // 2. 기존 think 함수의 시작 부분 로직
+//     const { situation, llmConfigs, activeConversations, characterDatabase } = world;
+
+//     if (situation.currentHour === 0 && situation.currentMinute < 30 && character.reflectedOnDay !== situation.day) {
+//         await reflectOnMemories(character, world);
+//         await createDailyPlan(character, world);
+//         character.reflectedOnDay = situation.day;
+//     }
+
+//     const currentConv = activeConversations.find(c => c.id === character.conversationId);
+//     if (currentConv) {
+//         if (currentConv.turnHolder === character.id) {
+//             return await generateConversationResponse(character, world);
+//         } else {
+//             return {
+//                 actionName: 'listen',
+//                 content: `${currentConv.participants.map(pId=>characterDatabase[pId]?.name).join(', ')}의 대화를 듣고 있습니다.`
+//             };
+//         }
+//     }
+
+//     if (shouldUseAI(character, world)) {
+//         return await generateFreeAction(character, world);
+//     } else {
+//         const scriptPlan = processWithScript(character, situation);
+//         return {
+//             actionName: 'script',
+//             location: scriptPlan.location,
+//             status: scriptPlan.status,
+//             content: scriptPlan.content,
+//             thoughts: scriptPlan.thoughts
+//         };
+//     }
+// }
 
 // =======================================================================
 // AI의 '장기적 사고' 기능들
 // =======================================================================
 
 //성찰
+
 async function reflectOnMemories(character, world) {
     const recentMemories = character.journal.slice(-20);
     if (recentMemories.length < 5) return;
@@ -47,52 +161,6 @@ async function createDailyPlan(character, world) {
         console.log(`[일일 계획 생성] ${character.name}: ${planText}`);
     } catch (error) {
         console.error(`[일일 계획 생성 오류] ${character.name}:`, error);
-    }
-}
-
-// =======================================================================
-// 모든 AI의 사고 과정을 통합하는 유일한 함수, think
-// =======================================================================
-
-async function think(character, world) {
-    const { situation, llmConfigs, activeConversations, characterDatabase } = world;
-
-    // 1. 장기적 사고: 자정 무렵에 성찰과 계획을 세웁니다.
-    if (situation.currentHour === 0 && situation.currentMinute < 30 && character.reflectedOnDay !== situation.day) {
-        await reflectOnMemories(character, world);
-        await createDailyPlan(character, world);
-        character.reflectedOnDay = situation.day;
-    }
-
-    // 2. 대화 중인지 아닌지에 따라 다른 생각의 흐름을 결정합니다.
-    const currentConv = activeConversations.find(c => c.id === character.conversationId);
-    if (currentConv) {
-        if (currentConv.turnHolder === character.id) {
-            // 내 차례라면, 다음 할 말을 생각합니다.
-            return await generateConversationResponse(character, world);
-        } else {
-            // 다른 사람 차례라면, '듣기' 액션을 반환합니다.
-            return {
-                actionName: 'listen',
-                content: `${currentConv.participants.map(pId=>characterDatabase[pId]?.name).join(', ')}의 대화를 듣고 있습니다.`
-            };
-        }
-    }
-
-    // 3. 대화 중이 아닌 경우: 스크립트 또는 AI 기반으로 자유 행동을 결정합니다.
-    if (shouldUseAI(character, world)) {
-        // AI가 자유롭게 행동을 결정합니다.
-        return await generateFreeAction(character, world);
-    } else {
-        // 스케줄에 따라 정해진 행동을 합니다.
-        const scriptPlan = processWithScript(character, situation);
-        return {
-            actionName: 'script',
-            location: scriptPlan.location,
-            status: scriptPlan.status,
-            content: scriptPlan.content,
-            thoughts: scriptPlan.thoughts
-        };
     }
 }
 
@@ -149,7 +217,7 @@ async function generateFreeAction(character, world) {
     // 대화 중이 아닐 때 로직
     const nearbyCharacters = Object.values(characterDatabase).filter(c => c.id !== character.id && c.location === character.location);
     const situationContext = { nearbyCharacterNames: nearbyCharacters.map(c => c.name) };
-    const relevantMemies = retrieveMemories(character, situationContext);
+    const relevantMemies = await searchRelevantMemories(character, situationContext, provider);
     
     const memoryContext = relevantMemies.length > 0
         ? `[당신이 현재 상황과 관련하여 떠올린 기억들 (중요도와 최신순)]\n` + relevantMemies.map(m => `- ${m.description} (중요도: ${m.poignancy})`).join('\n')
@@ -205,11 +273,25 @@ async function generateFreeAction(character, world) {
     }`;
     try {
         const rawResponse = await callLLM(prompt, world.llmConfigs[character.id]?.provider);
-        const jsonMatch = rawResponse.match(/\{[\s\S]*\}/);
-        if (jsonMatch) return JSON.parse(jsonMatch[0]);
-        return { thoughts: "AI 응답(자유행동)에서 JSON을 찾지 못함", actionName: "talkToSelf", content: "(JSON 파싱 오류)" };
+        
+        // 간단한 JSON 추출 및 정리
+        let jsonStr = rawResponse.match(/\{[\s\S]*\}/)?.[0];
+        if (!jsonStr) throw new Error("JSON 형식을 찾을 수 없음");
+        
+        // JSON 끝 이후 텍스트 제거 (가장 마지막 } 이후 자르기)
+        const lastBrace = jsonStr.lastIndexOf('}');
+        if (lastBrace !== -1) {
+            jsonStr = jsonStr.substring(0, lastBrace + 1);
+        }
+        
+        return JSON.parse(jsonStr);
     } catch (error) {
-        return { thoughts: "AI 호출(자유행동) 중 오류 발생: " + error.message, actionName: "talkToSelf", content: "(AI 호출 오류)" };
+        console.error(`[LLM 파싱 오류] ${character.name}: ${error.message}`);
+        return { 
+            thoughts: `파싱 오류: ${error.message}`, 
+            actionName: "talkToSelf", 
+            content: "(AI 응답 처리 중 오류)" 
+        };
     }
 }
 
@@ -324,5 +406,9 @@ function getRelationshipContext(character, targetName) {
     return context;
 }
 
-// 이제 이 파일은 think 함수만 외부에 공개합니다.
-module.exports = { think };
+module.exports = { 
+    runAgent,           // 기존 유지
+    agentTick,          // ⭐ 새로 추가
+    handleLongTermThinking,  // ⭐ 새로 추가
+    makeImmediateDecision    // ⭐ 새로 추가
+};

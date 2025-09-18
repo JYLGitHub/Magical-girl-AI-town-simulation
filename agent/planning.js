@@ -1,7 +1,7 @@
 // 📍 planning.js
 
-const { callLLM } = require('./llm.js');
-const { locations } = require('./scenarios.js');
+const { callLLM } = require('../utils/llm.js');
+const { locations } = require('../core/scenarios.js');
 
 async function createPlanFromConversation(conversation, characterDatabase, provider, situation) {
     // ⭐ 오류 수정: 누락되었던 conversationLog와 participantNames 변수 선언을 다시 추가합니다.

@@ -1,6 +1,7 @@
 // 📍 memory.js
 
-const { callLLM } = require('./llm.js');
+const { callLLM } = require('../utils/llm.js');
+
 
 function retrieveMemories(character, situationContext) {
     if (!character.journal || character.journal.length === 0) {
@@ -23,6 +24,53 @@ function retrieveMemories(character, situationContext) {
     
     // 상위 10개의 기억만 반환
     return scoredMemories.slice(0, 5);
+}
+
+async function searchRelevantMemories(character, currentContext, provider) {
+    // 1. 전체 기억에서 일차 필터링 (기존 방식)
+    const candidateMemories = retrieveMemories(character, currentContext);
+    
+    if (candidateMemories.length === 0) {
+        console.log(`[기억 검색] ${character.name} - 후보 기억 없음`);
+        return [];
+    }
+    
+    console.log(`[기억 검색] ${character.name} - 후보 기억 ${candidateMemories.length}개:`);
+    candidateMemories.forEach((m, i) => {
+        console.log(`  ${i+1}. ${m.description} (점수: ${m.score?.toFixed(2)})`);
+    });
+
+    // 2. LLM을 통한 관련성 평가
+    const memoryList = candidateMemories.map((m, index) => 
+        `${index + 1}. ${m.description}`
+    ).join('\n');
+    
+    const contextDescription = `${character.name}이(가) ${currentContext.nearbyCharacterNames.join(', ')}와 상호작용하려고 함`;
+    
+    const prompt = `현재 상황: "${contextDescription}"
+    
+다음은 ${character.name}의 기억 목록입니다:
+${memoryList}
+
+현재 상황과 가장 관련이 높은 기억 3개의 번호만 골라주세요.
+관련성이 낮은 기억들은 제외하세요.
+
+응답 형식: [1, 3, 5] (숫자 배열만 출력)`;
+
+    try {
+        const response = await callLLM(prompt, provider);
+        const arrayMatch = response.match(/\[[\d,\s]+\]/);
+        if (arrayMatch) {
+            const selectedIndices = JSON.parse(arrayMatch[0]);
+            const selectedMemories = selectedIndices.map(i => candidateMemories[i - 1]).filter(Boolean);
+            console.log(`[기억 검색] ${character.name} - ${candidateMemories.length}개 중 ${selectedMemories.length}개 선택`);
+            return selectedMemories;
+        }
+        return candidateMemories.slice(0, 3); // 파싱 실패시 기존 방식
+    } catch (error) {
+        console.error(`[기억 검색 오류] ${character.name}:`, error);
+        return candidateMemories.slice(0, 3); // 실패시 기존 방식
+    }
 }
 
 async function createMemoryFromConversation(character, conversation, characterDatabase, provider) {
@@ -65,14 +113,7 @@ async function createMemoryFromConversation(character, conversation, characterDa
                 participants: conversation.participantHistory.map(id => characterDatabase[id]?.name).filter(Boolean),
                 conversationId: conversation.id
             };
-            // if (result.summary && result.poignancy) {
-            //     return {
-            //         timestamp: new Date().toISOString(),
-            //         description: result.summary,
-            //         poignancy: result.poignancy,
-            //         type: 'conversation', // ⭐ 일반 대화 기억 타입 지정
-            //     };
-            // }
+            console.log(`[기억 생성 확인] ${character.name} - description: "${newMemory.description}", poignancy: ${newMemory.poignancy}`);
             return newMemory; // 이제 생성된 기억 '객체'만 반환합니다.
         }
         console.error(`[기억 생성 오류] ${character.name}: 대화(${conversation.id})에서 유효한 JSON 응답을 받지 못했습니다.`);
@@ -114,9 +155,16 @@ function calculateImportanceScore(memory) {
 // 3. (단순화된) 관련성 점수 계산: 현재 상황과 얼마나 관련 있는지 평가합니다.
 function calculateRelevanceScore(memory, situationContext) {
     let score = 0;
+    // 🔥 방어 코드 추가
+    const textToCheck = memory.description || memory.activity || memory.summary || '';
+    if (!textToCheck.trim()) {
+        console.warn(`[기억 오류] 텍스트가 없는 기억:`, memory);
+        return 0;
+    }
+
     if (situationContext.nearbyCharacterNames) {
         for (const name of situationContext.nearbyCharacterNames) {
-            if (memory.description.includes(name)) {
+            if (textToCheck.includes(name)) {
                 score += 0.3;
             }
         }
@@ -125,7 +173,7 @@ function calculateRelevanceScore(memory, situationContext) {
     // 약속 관련성 추가
     if (memory.type === 'plan') {
         score += 0.5; // 약속은 기본적으로 관련성이 높음
-        console.log(`[관련성] 약속 "${memory.description}" - 점수: ${score}`);
+         console.log(`[관련성] 약속 "${memory.description || memory.activity || '내용없음'}" - 점수: ${score}`);
     }
     
     return Math.min(1.0, score);
@@ -141,5 +189,6 @@ function calculateRelevanceScore(memory, situationContext) {
 
 module.exports = { 
     retrieveMemories,
-    createMemoryFromConversation 
+    createMemoryFromConversation,
+    searchRelevantMemories
 };

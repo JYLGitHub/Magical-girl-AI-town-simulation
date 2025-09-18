@@ -1,10 +1,10 @@
 // 📍 server.js (최종 완성본)
 
 require('dotenv').config();
-require('./logger.js');
+require('./utils/logger.js');
 const express = require('express');
 const cors = require('cors');
-const { World } = require('./engine.js');
+const { World } = require('./core/engine.js');
 const setupRoutes = require('./routes.js');
 
 const world = new World();

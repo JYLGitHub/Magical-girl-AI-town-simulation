@@ -41,6 +41,7 @@ function addMessageToConversation(conversation, speakerId, content, nextSpeakerI
  * 대화를 비활성화하고 참여자들의 상태를 업데이트합니다.
  * @param {object} conversation - 종료할 대화 객체
  * @param {object} characterDatabase - 전체 캐릭터 데이터베이스
+ * @param {object} world - 전체 월드 객체 (기억 생성을 위해 추가)
  */
 function endConversation(conversation, characterDatabase) {
     if (!conversation.isActive) return; // 이미 종료된 대화는 다시 처리하지 않음

@@ -1,10 +1,10 @@
 // 📍 inputHandler.js (수정 완료된 최종본)
 
-const { createMemoryFromConversation } = require('./memory.js');
-const { createPlanFromConversation } = require('./planning.js');
-const { updateRelationshipFromConversation } = require('./relationships.js');
+const { createMemoryFromConversation } = require('../agent/memory.js');
+const { createPlanFromConversation } = require('../agent/planning.js');
+const { updateRelationshipFromConversation } = require('../simulation/relationships.js');
 const { updateCharacterStats } = require('./status.js');
-const { createConversation, addMessageToConversation, endConversation } = require('./conversation.js');
+const { createConversation, addMessageToConversation, endConversation } = require('../agent/conversation.js');
 
 
 // [수정] 이제 agentActions도 인자로 함께 받습니다.
@@ -96,6 +96,15 @@ async function processActions(actions, world) {
                 if (conv.participants.length >= 2) {
                     conv.turnHolder = conv.participants.find(pId => pId !== character.id);
                     addMessageToConversation(conv, character.id, '(대화를 떠났습니다)', conv.turnHolder);
+                } else {
+                    // 🔥 1명 이하가 남으면 대화 종료
+                    conv.isActive = false;
+                    conv.participants.forEach(pId => {
+                        const remainingChar = characterDatabase[pId];
+                        if (remainingChar) {
+                            remainingChar.conversationId = null;
+                        }
+                    });
                 }
             }
         } else {
@@ -129,17 +138,22 @@ async function processActions(actions, world) {
     
     // --- 4. 종료된 대화 처리 (engine.js에서 이동해 온 로직) ---
     console.log("\n--- [3단계: 종료된 대화 처리] ---");
-    // [수정] 대화 종료를 판단하는 더 정확한 로직
-    
+    console.log(`[디버깅] previousConversations 개수: ${previousConversations.length}`);
+    console.log(`[디버깅] 현재 activeConversations 개수: ${world.activeConversations.length}`);
+
     const endedConversations = previousConversations.filter(
         prevConv => {
             const currentConv = world.activeConversations.find(newConv => newConv.id === prevConv.id);
-            // [수정] 조건: 이전 턴에는 active였는데, 현재 턴에는 active가 아니거나 아예 사라진 대화
-            return prevConv.isActive && (!currentConv || !currentConv.isActive);
+            const shouldEnd = prevConv.isActive && (!currentConv || !currentConv.isActive);
+            console.log(`[디버깅] 대화 ${prevConv.id}: 이전 active=${prevConv.isActive}, 현재 존재=${!!currentConv}, 현재 active=${currentConv?.isActive}, 종료 여부=${shouldEnd}`);
+            return shouldEnd;
         }
     );
 
+    console.log(`[디버깅] endedConversations 개수: ${endedConversations.length}`);
+
     for (const endedConv of endedConversations) {
+        console.log(`[대화 종료 처리 시작] 대화 ID: ${endedConv.id}, 참여자: ${endedConv.participantHistory}`);
         console.log(`  - 대화(${endedConv.id})가 종료되어 기억과 약속을 처리합니다.`);
         const provider = (world.llmConfigs[endedConv.participantHistory[0]]?.provider) || 'gemini';
 
@@ -154,14 +168,17 @@ async function processActions(actions, world) {
         }
 
         // 2-2. 기억 및 관계 업데이트
+        
         for (const participantId of endedConv.participantHistory) {
             const character = world.characterDatabase[participantId];
             if (!character) continue;
-
+            console.log(`[기억 생성 시도] ${character.name}에 대해 기억 생성 중...`);
             const newMemory = await createMemoryFromConversation(character, endedConv, world.characterDatabase, provider);
+            console.log(`[기억 생성 결과] ${character.name}: ${newMemory ? '성공' : '실패'}`);
             if (newMemory) {
-                character.journal.push(newMemory); // ⭐ 데이터 변경 실행
-                console.log(`    - ${character.name}의 기억 생성: "${newMemory.description}" (중요도: ${newMemory.poignancy})`);
+                character.journal.push(newMemory);
+                console.log(`[기억 저장 완료] ${character.name}: ${newMemory.description} (중요도: ${newMemory.poignancy})`);
+                console.log(`[기억 저장 확인] ${character.name}의 총 기억 개수: ${character.journal.length}`);
             }
         }
         
@@ -209,9 +226,12 @@ async function processActions(actions, world) {
     for (const character of Object.values(world.characterDatabase)) {
         let displayText = '';
         const log = actionLogs.find(l => l.charId === character.id);
-
+        console.log(`[출력 디버깅] ${character.name} - log: ${!!log}, conversationId: ${character.conversationId}`);
+        
         if (log) {
             displayText = log.description;
+            console.log(`[출력 디버깅] ${character.name} - log에서: "${displayText}"`);
+
         } else if (character.conversationId) {
             const currentConv = world.activeConversations.find(c => c.id === character.conversationId);
             if(currentConv) {
@@ -220,6 +240,7 @@ async function processActions(actions, world) {
         } else {
             // [수정] agentActions 대신 actions (이 함수의 인자) 를 사용합니다.
             const scriptAction = actions.find(a => a.charId === character.id && a.actionName === 'script');
+            console.log(`[출력 디버깅] ${character.name} - scriptAction: ${!!scriptAction}, content: "${scriptAction?.content}"`);
             if (scriptAction && scriptAction.content) {
                 displayText = scriptAction.content;
             } else {

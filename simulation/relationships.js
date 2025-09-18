@@ -1,4 +1,4 @@
-const { callLLM } = require('./llm.js');
+const { callLLM } = require('../utils/llm.js');
 
 /**
  * 대화 기록을 바탕으로 두 캐릭터 간의 관계 변화를 추론합니다.
