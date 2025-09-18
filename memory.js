@@ -2,6 +2,87 @@
 
 const { callLLM } = require('./llm.js');
 
+function retrieveMemories(character, situationContext) {
+    if (!character.journal || character.journal.length === 0) {
+        return [];
+    }
+
+    const scoredMemories = character.journal.map(memory => {
+        const recency = calculateRecencyScore(memory);
+        const importance = calculateImportanceScore(memory);
+        const relevance = calculateRelevanceScore(memory, situationContext);
+
+        // ⭐ 최종 점수는 세 점수의 합으로 결정 (AI Town의 단순화된 버전)
+        const totalScore = recency + importance + relevance;
+        
+        return { ...memory, score: totalScore, scores: { recency, importance, relevance } };
+    });
+
+    // 점수가 높은 순으로 정렬
+    scoredMemories.sort((a, b) => b.score - a.score);
+    
+    // 상위 10개의 기억만 반환
+    return scoredMemories.slice(0, 5);
+}
+
+async function createMemoryFromConversation(character, conversation, characterDatabase, provider) {
+    const conversationLog = conversation.log
+        .map(entry => `${characterDatabase[entry.speaker]?.name || '???'}: "${entry.content}"`)
+        .join('\n');
+    const ph = conversation.participantHistory || conversation.participants || [];
+    const participantNames = ph.map(pId => characterDatabase[pId]?.name).filter(n => n && n !== character.name);
+
+    const prompt = `당신은 '${character.name}'입니다. 방금 '${participantNames.join(', ')}'와(과) 나눈 대화는 다음과 같습니다.
+
+    [대화 내용]
+    ${conversationLog}
+
+    [당신의 임무]
+    1. 위 대화에서 당신이 얻은 핵심적인 정보나 느낀 감정을 한 문장으로 요약하세요.
+    2. 이 대화가 당신에게 얼마나 중요하거나 감정적으로 강렬했는지 1(사소함) ~ 10(매우 중요함) 사이의 점수로 평가하세요.
+    [점수 예시]
+    - 일상적인 안부나 잡담: 1-3점
+    - 새로운 정보나 계획에 대한 논의: 4-6점
+    - 감정적인 교류나 중요한 결정, 갈등: 7-10점
+
+    [출력 형식]
+    반드시 아래와 같은 JSON 형식으로만 응답해야 합니다.
+    {
+    "summary": "대화에 대한 한 문장 요약",
+    "poignancy": 중요도 점수 (숫자)
+    }`;
+
+    try {
+        const rawResponse = await callLLM(prompt, provider);
+        const jsonMatch = rawResponse.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+            const result = JSON.parse(jsonMatch[0]);
+            const newMemory = {
+                timestamp: new Date().toISOString(),
+                description: result.summary,
+                poignancy: result.poignancy,
+                type: 'conversation',
+                participants: conversation.participantHistory.map(id => characterDatabase[id]?.name).filter(Boolean),
+                conversationId: conversation.id
+            };
+            // if (result.summary && result.poignancy) {
+            //     return {
+            //         timestamp: new Date().toISOString(),
+            //         description: result.summary,
+            //         poignancy: result.poignancy,
+            //         type: 'conversation', // ⭐ 일반 대화 기억 타입 지정
+            //     };
+            // }
+            return newMemory; // 이제 생성된 기억 '객체'만 반환합니다.
+        }
+        console.error(`[기억 생성 오류] ${character.name}: 대화(${conversation.id})에서 유효한 JSON 응답을 받지 못했습니다.`);
+        return null;
+    } catch (error) {
+        console.error(`[기억 생성 오류] ${character.name}:`, error);
+        return null;
+    }
+}
+
 // --- 기억 검색 시스템 (AI Town 방식 적용) ---
 
 // ⭐ 1. 최신성 점수 계산: 과거 기억과 미래 약속을 모두 처리하도록 개선합니다.
@@ -56,78 +137,7 @@ function calculateRelevanceScore(memory, situationContext) {
  * @param {object} situationContext - 현재 상황 정보 (주변 인물 등)
  * @returns {Array<object>} 점수가 높은 상위 기억들의 배열
  */
-function retrieveMemories(character, situationContext) {
-    if (!character.journal || character.journal.length === 0) {
-        return [];
-    }
 
-    const scoredMemories = character.journal.map(memory => {
-        const recency = calculateRecencyScore(memory);
-        const importance = calculateImportanceScore(memory);
-        const relevance = calculateRelevanceScore(memory, situationContext);
-
-        // ⭐ 최종 점수는 세 점수의 합으로 결정 (AI Town의 단순화된 버전)
-        const totalScore = recency + importance + relevance;
-        
-        return { ...memory, score: totalScore, scores: { recency, importance, relevance } };
-    });
-
-    // 점수가 높은 순으로 정렬
-    scoredMemories.sort((a, b) => b.score - a.score);
-    
-    // 상위 10개의 기억만 반환
-    return scoredMemories.slice(0, 5);
-}
-
-
-async function createMemoryFromConversation(character, conversation, characterDatabase, provider) {
-    const conversationLog = conversation.log
-        .map(entry => `${characterDatabase[entry.speaker]?.name || '???'}: "${entry.content}"`)
-        .join('\n');
-    const ph = conversation.participantHistory || conversation.participants || [];
-    const participantNames = ph.map(pId => characterDatabase[pId]?.name).filter(n => n && n !== character.name);
-
-    const prompt = `당신은 '${character.name}'입니다. 방금 '${participantNames.join(', ')}'와(과) 나눈 대화는 다음과 같습니다.
-
-[대화 내용]
-${conversationLog}
-
-[당신의 임무]
-1. 위 대화에서 당신이 얻은 핵심적인 정보나 느낀 감정을 한 문장으로 요약하세요.
-2. 이 대화가 당신에게 얼마나 중요하거나 감정적으로 강렬했는지 1(사소함) ~ 10(매우 중요함) 사이의 점수로 평가하세요.
-[점수 예시]
-- 일상적인 안부나 잡담: 1-3점
-- 새로운 정보나 계획에 대한 논의: 4-6점
-- 감정적인 교류나 중요한 결정, 갈등: 7-10점
-
-[출력 형식]
-반드시 아래와 같은 JSON 형식으로만 응답해야 합니다.
-{
-  "summary": "대화에 대한 한 문장 요약",
-  "poignancy": 중요도 점수 (숫자)
-}`;
-
-    try {
-        const rawResponse = await callLLM(prompt, provider);
-        const jsonMatch = rawResponse.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-            const result = JSON.parse(jsonMatch[0]);
-            if (result.summary && result.poignancy) {
-                return {
-                    timestamp: new Date().toISOString(),
-                    description: result.summary,
-                    poignancy: result.poignancy,
-                    type: 'conversation', // ⭐ 일반 대화 기억 타입 지정
-                };
-            }
-        }
-        console.error(`[기억 생성 오류] ${character.name}: 대화(${conversation.id})에서 유효한 JSON 응답을 받지 못했습니다.`);
-        return null;
-    } catch (error) {
-        console.error(`[기억 생성 오류] ${character.name}:`, error);
-        return null;
-    }
-}
 
 module.exports = { 
     retrieveMemories,

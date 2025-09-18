@@ -16,31 +16,60 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('startBtn').addEventListener('click', startSimulation);
     document.getElementById('pauseBtn').addEventListener('click', pauseSimulation);
     document.getElementById('resetBtn').addEventListener('click', resetSimulation);
-    initializeSimulationData();
+    // initializeSimulationData();
+
+    // [수정] 이제 초기화와 주기적 업데이트를 한 함수에서 관리합니다.
+    // 페이지가 로드되면 일단 한 번 상태를 가져오고,
+    fetchAndUpdate();
+    // 그 후 5초마다 주기적으로 상태를 가져옵니다.
+    setInterval(fetchAndUpdate, 5000);
 });
 
-async function initializeSimulationData() {
+// [수정] initializeSimulationData, gameLoop, processTimeStep 함수를 모두 이 함수로 통합합니다.
+async function fetchAndUpdate() {
+    // [추가] isRunning이 false이면 (일시정지 상태이면) 서버에 아무것도 물어보지 않습니다.
+    if (!gameState.isRunning) {
+        return;
+    }
+
     try {
-        const response = await fetch('/api/get-initial-data');
+        // [수정] 이제 오직 '/api/get-world-state' API만 호출합니다.
+        const response = await fetch('/api/get-world-state');
         if (!response.ok) throw new Error('서버 응답 오류');
         
-        const data = await response.json();
+        const serverWorld = await response.json();
         
-        // 초기 캐릭터 데이터 설정
-        for (const charId in data.characters) {
-            gameState.characters[charId] = { ...data.characters[charId], isExpanded: false };
+        // [수정] 서버에서 받은 최신 데이터로 클라이언트의 gameState 전체를 업데이트합니다.
+        // 캐릭터 데이터 업데이트
+        for (const charId in serverWorld.characters) {
+            // 기존에 있던 isExpanded 같은 클라이언트 전용 상태는 유지하면서 업데이트
+            const localChar = gameState.characters[charId] || {};
+            gameState.characters[charId] = {
+                ...serverWorld.characters[charId],
+                isExpanded: localChar.isExpanded || false, 
+            };
         }
         
-        // 초기 시간 및 기타 정보 설정
-        gameState.situation = data.situation;
+        // 시간 및 기타 정보 업데이트
+        gameState.day = serverWorld.situation.day;
+        gameState.currentTime = serverWorld.situation.currentHour;
+        gameState.currentMinute = serverWorld.situation.currentMinute;
         
+        // 화면을 새로 그립니다.
         updateTimeDisplay();
         updateCharacterCount();
-        generateLLMConfigUI();
+        generateLLMConfigUI(); // 이 부분은 한 번만 실행되도록 수정할 수도 있습니다.
+        updateAIStats();
         updateCharacterCards();
+        // [추가] 서버에서 받은 이벤트 로그를 화면에 표시합니다.
+        // (이를 위해선 서버의 world 객체에 mainEvents 배열이 있어야 합니다)
+        if (serverWorld.mainEvents) {
+            gameState.mainEvents = serverWorld.mainEvents;
+            updateMainLog();
+        }
 
     } catch (error) {
-        console.error("초기화 오류:", error);
+        console.error("월드 상태 업데이트 오류:", error);
     }
 }
 
@@ -52,10 +81,7 @@ function startSimulation() {
     document.getElementById('startBtn').disabled = true;
     document.getElementById('pauseBtn').disabled = false;
     document.getElementById('simulationStatus').textContent = '실행 중';
-    
-    // 3초마다 UI 업데이트 시작
-    fetchWorldStateAndUpdateUI(); // 즉시 한 번 실행
-    uiUpdateInterval = setInterval(fetchWorldStateAndUpdateUI, 3000); // 3초 간격
+    addMainEvent('🚀 화면 업데이트를 시작합니다!', 'event');
 }
 
 function pauseSimulation() {
@@ -63,7 +89,7 @@ function pauseSimulation() {
     document.getElementById('startBtn').disabled = false;
     document.getElementById('pauseBtn').disabled = true;
     document.getElementById('simulationStatus').textContent = '일시정지';
-    clearInterval(uiUpdateInterval); // UI 업데이트 중단
+    addMainEvent('⏸️ 화면 업데이트를 중지합니다.', 'event');
 }
 
 async function resetSimulation() {
@@ -88,7 +114,7 @@ async function fetchWorldStateAndUpdateUI() {
     try {
         const response = await fetch('/api/get-world-state');
         if (!response.ok) throw new Error('서버 상태 가져오기 실패');
-=        const serverWorld = await response.json();
+        const serverWorld = await response.json();
         
         // [핵심 수정] 데이터를 통째로 덮어쓰는 대신, 캐릭터별로 업데이트합니다.
         for (const charId in serverWorld.characters) {

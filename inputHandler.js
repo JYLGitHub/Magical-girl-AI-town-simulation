@@ -1,9 +1,11 @@
 // 📍 inputHandler.js (수정 완료된 최종본)
 
-const { createConversation, addMessageToConversation, endConversation } = require('./conversation.js');
 const { createMemoryFromConversation } = require('./memory.js');
 const { createPlanFromConversation } = require('./planning.js');
 const { updateRelationshipFromConversation } = require('./relationships.js');
+const { updateCharacterStats } = require('./status.js');
+const { createConversation, addMessageToConversation, endConversation } = require('./conversation.js');
+
 
 // [수정] 이제 agentActions도 인자로 함께 받습니다.
 async function processActions(actions, world) {
@@ -12,7 +14,7 @@ async function processActions(actions, world) {
     // [수정] worldState 대신 world에서 필요한 모든 데이터를 가져옵니다.
     const { characterDatabase, activeConversations, llmConfigs, situation } = world;
     const actionLogs = [];
-    // [수정] world.activeConversations를 사용합니다.
+    // 대화 종료 여부를 판단하기 위해 이전 대화 상태를 복사해둡니다.
     const previousConversations = world.activeConversations.map(c => ({...c}));
 
     console.log("\n--- [2단계: 액션 일괄 처리 시작] ---");
@@ -126,71 +128,82 @@ async function processActions(actions, world) {
     }
     
     // --- 4. 종료된 대화 처리 (engine.js에서 이동해 온 로직) ---
-    console.log("\n--- [4단계: 종료된 대화 처리] ---");
+    console.log("\n--- [3단계: 종료된 대화 처리] ---");
+    // [수정] 대화 종료를 판단하는 더 정확한 로직
+    
     const endedConversations = previousConversations.filter(
-        prevConv => prevConv.isActive && !world.activeConversations.some(newConv => newConv.id === prevConv.id)
+        prevConv => {
+            const currentConv = world.activeConversations.find(newConv => newConv.id === prevConv.id);
+            // [수정] 조건: 이전 턴에는 active였는데, 현재 턴에는 active가 아니거나 아예 사라진 대화
+            return prevConv.isActive && (!currentConv || !currentConv.isActive);
+        }
     );
 
     for (const endedConv of endedConversations) {
         console.log(`  - 대화(${endedConv.id})가 종료되어 기억과 약속을 처리합니다.`);
-        const firstId = (endedConv.participantHistory && endedConv.participantHistory[0]) || (endedConv.participants && endedConv.participants[0]);
-        const provider = (firstId && llmConfigs[firstId]?.provider) || 'gemini';
-        
-        const newPlan = await createPlanFromConversation(endedConv, characterDatabase, provider, situation);
+        const provider = (world.llmConfigs[endedConv.participantHistory[0]]?.provider) || 'gemini';
+
+        // 2-1. 계획 생성 (보고서 받기 -> 실행)
+        const newPlan = await createPlanFromConversation(endedConv, world.characterDatabase, provider, world.situation);
         if (newPlan && newPlan.participants) {
-            console.log(`  [약속 기록!] ${newPlan.day}일차 ${newPlan.hour}:${newPlan.minute} ${newPlan.location}에서 "${newPlan.activity}"`);
-            const planMemory = {
-                timestamp: new Date().toISOString(),
-                description: `${newPlan.day}일 ${newPlan.hour}:${newPlan.minute}에 ${newPlan.location}에서 '${newPlan.activity}' 약속. (참여자: ${newPlan.participants.join(', ')})`,
-                poignancy: newPlan.poignancy,
-                type: 'plan',
-            };
             newPlan.participants.forEach(name => {
-                const char = Object.values(characterDatabase).find(c => c.name === name);
-                if (char) char.journal.push(planMemory);
+                const char = Object.values(world.characterDatabase).find(c => c.name === name);
+                if (char) char.journal.push(newPlan); // ⭐ 데이터 변경 실행
             });
+            console.log(`  [약속 기록!] ${newPlan.day}일차 ${newPlan.hour}:${newPlan.minute} ...`);
         }
 
+        // 2-2. 기억 및 관계 업데이트
         for (const participantId of endedConv.participantHistory) {
-            const character = characterDatabase[participantId];
-            if (character) {
-                const newMemory = await createMemoryFromConversation(character, endedConv, characterDatabase, provider);
-                if (newMemory) {
-                    character.journal.push(newMemory);
-                    console.log(`    - ${character.name}의 기억 생성: "${newMemory.description}" (중요도: ${newMemory.poignancy})`);
-                }
+            const character = world.characterDatabase[participantId];
+            if (!character) continue;
+
+            const newMemory = await createMemoryFromConversation(character, endedConv, world.characterDatabase, provider);
+            if (newMemory) {
+                character.journal.push(newMemory); // ⭐ 데이터 변경 실행
+                console.log(`    - ${character.name}의 기억 생성: "${newMemory.description}" (중요도: ${newMemory.poignancy})`);
             }
         }
         
         const ids = endedConv.participantHistory || [];
         for (let i = 0; i < ids.length; i++) {
             for (let j = i + 1; j < ids.length; j++) {
-                const a = characterDatabase[ids[i]];
-                const b = characterDatabase[ids[j]];
+                const a = world.characterDatabase[ids[i]];
+                const b = world.characterDatabase[ids[j]];
                 if (!a || !b) continue;
 
-                const deltaAB = await updateRelationshipFromConversation(a, b, endedConv, characterDatabase, provider);
-                const deltaBA = await updateRelationshipFromConversation(b, a, endedConv, characterDatabase, provider);
+                const deltaAB = await updateRelationshipFromConversation(a, b, endedConv, world.characterDatabase, provider);
+                const deltaBA = await updateRelationshipFromConversation(b, a, endedConv, world.characterDatabase, provider);
 
                 if (deltaAB) {
                     a.relationships[b.name] = a.relationships[b.name] || { affection: 50, trust: 50 };
-                    a.relationships[b.name].affection += deltaAB.affectionChange;
-                    a.relationships[b.name].trust     += deltaAB.trustChange;
+                    a.relationships[b.name].affection += deltaAB.affectionChange; // ⭐ 데이터 변경 실행
+                    a.relationships[b.name].trust     += deltaAB.trustChange;     // ⭐ 데이터 변경 실행
                     console.log(`    - 관계 변화 ${a.name}→${b.name}: ❤️ ${deltaAB.affectionChange}, 🤝 ${deltaAB.trustChange}`);
                 }
                 if (deltaBA) {
                     b.relationships[a.name] = b.relationships[a.name] || { affection: 50, trust: 50 };
-                    b.relationships[a.name].affection += deltaBA.affectionChange;
-                    b.relationships[a.name].trust     += deltaBA.trustChange;
+                    b.relationships[a.name].affection += deltaBA.affectionChange; // ⭐ 데이터 변경 실행
+                    b.relationships[a.name].trust     += deltaBA.trustChange;     // ⭐ 데이터 변경 실행
                     console.log(`    - 관계 변화 ${b.name}→${a.name}: ❤️ ${deltaBA.affectionChange}, 🤝 ${deltaBA.trustChange}`);
                 }
             }
         }
     }
+    // --- 종료된 대화 처리 끝 ---
+
+    // --- 3. [추가] 캐릭터 스탯 업데이트 ---
+    console.log("\n--- [4단계: 캐릭터 스탯 업데이트] ---");
+    for (const character of Object.values(world.characterDatabase)) {
+        const plan = actions.find(p => p.charId === character.id);
+        updateCharacterStats(character, plan); // ⭐ 데이터 변경 실행
+    }
+    // --- 캐릭터 스탯 업데이트 끝 ---
 
     // --- 5. 최종 결과 출력 ---
     const { day, currentHour, currentMinute } = world.situation;
     const dayOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'][(day) % 7];
+    console.log("\n--- [5단계: 최종 결과 브리핑] ---");
     console.log(`\n--- [${day}일차 (${dayOfWeek}) ${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}] ---`);
 
     for (const character of Object.values(world.characterDatabase)) {
@@ -215,13 +228,14 @@ async function processActions(actions, world) {
         }
         console.log(`  - [${character.location}] ${character.name}: ${displayText}`);
     }
-
     world.activeConversations.forEach(conv => {
         if (conv.isActive && conv.participants.length < 2) {
             endConversation(conv, characterDatabase);
         }
     });
     world.activeConversations = world.activeConversations.filter(c => c.isActive);
+    // --- 최종 결과 출력 끝 ---
+    return { actionLogs }; 
 }
 
 module.exports = { processActions };

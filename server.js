@@ -36,19 +36,14 @@ app.use(express.static('public'));
 const apiRouter = setupRoutes(world);
 app.use(apiRouter);
 
-app.get('/api/get-world-state', (req, res) => {
-    // 월드의 모든 데이터를 JSON 형태로 응답합니다.
-    res.json({
-        characters: world.characterDatabase,
-        situation: world.situation,
-        mainEvents: world.mainEvents || [], // mainEvents가 없을 경우를 대비
-        llmConfigs: world.llmConfigs
-    });
-});
-
 app.post('/api/reset-simulation', (req, res) => {
     console.log('🔄 시뮬레이션 데이터 리셋 요청 수신');
-    Object.assign(world, new World()); // 기존 world 객체를 새 world로 덮어씁니다.
+    // [수정] world를 새로 생성하고, 기존 world의 속성을 새 객체로 덮어씁니다.
+    // 이렇게 하면 참조가 유지되어 서버 재시작 없이 리셋이 가능합니다.
+    const newWorld = new World();
+    Object.keys(newWorld).forEach(key => {
+        world[key] = newWorld[key];
+    });
     console.log('✅ 시뮬레이션 데이터가 성공적으로 초기화되었습니다.');
     res.json({ success: true, message: '시뮬레이션이 초기화되었습니다.' });
 });
