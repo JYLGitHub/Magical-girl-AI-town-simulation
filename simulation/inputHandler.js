@@ -5,7 +5,7 @@ const { createPlanFromConversation } = require('../agent/planning.js');
 const { updateRelationshipFromConversation } = require('../simulation/relationships.js');
 const { updateCharacterStats } = require('./status.js');
 const { createConversation, addMessageToConversation, endConversation } = require('../agent/conversation.js');
-
+const { truncateText } = require('../utils/logger.js');
 
 // [수정] 이제 agentActions도 인자로 함께 받습니다.
 async function processActions(actions, world) {
@@ -63,7 +63,8 @@ async function processActions(actions, world) {
         const nextSpeakerId = participantIds.find(id => id !== firstSpeakerId) || firstSpeakerId;
         addMessageToConversation(newConv, firstSpeakerId, firstSpeakerAction.content, nextSpeakerId);
         const targetNames = firstSpeakerAction.target.join(', ');
-        actionLogs.push({ charId: firstSpeakerId, description: `${targetNames}에게 대화 시작: "${firstSpeakerAction.content}"` });
+        const truncatedContent = truncateText(firstSpeakerAction.content);
+        actionLogs.push({ charId: firstSpeakerId, description: `${targetNames}에게 대화 시작: "${truncatedContent}"` });
     }
 
     // --- 3. 개별 액션 처리 (기존 로직 유지) ---
@@ -87,7 +88,8 @@ async function processActions(actions, world) {
                     nextSpeakerId = conv.participants.find(pId => pId !== character.id) || character.id;
                 }
                 addMessageToConversation(conv, character.id, action.content, nextSpeakerId);
-                description = `대화 중: "${action.content}"`;
+                const truncatedContent = truncateText(action.content);
+                description = `대화 중: "${truncatedContent}"`;
 
             } else if (action.actionName === 'leaveConversation') {
                 description = `${action.content || '대화를 떠났습니다.'}`;
@@ -177,7 +179,9 @@ async function processActions(actions, world) {
             console.log(`[기억 생성 결과] ${character.name}: ${newMemory ? '성공' : '실패'}`);
             if (newMemory) {
                 character.journal.push(newMemory);
-                console.log(`[기억 저장 완료] ${character.name}: ${newMemory.description} (중요도: ${newMemory.poignancy})`);
+                
+                const truncatedDesc = truncateText(newMemory.description);
+                console.log(`[기억 저장 완료] ${character.name}: ${truncatedDesc} (중요도: ${newMemory.poignancy})`);
                 console.log(`[기억 저장 확인] ${character.name}의 총 기억 개수: ${character.journal.length}`);
             }
         }
@@ -230,7 +234,7 @@ async function processActions(actions, world) {
         
         if (log) {
             displayText = log.description;
-            console.log(`[출력 디버깅] ${character.name} - log에서: "${displayText}"`);
+            console.log(`[출력 디버깅] ${character.name} - log에서: "${truncateText(displayText)}"`);
 
         } else if (character.conversationId) {
             const currentConv = world.activeConversations.find(c => c.id === character.conversationId);

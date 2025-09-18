@@ -9,22 +9,22 @@ const setupRoutes = require('./routes.js');
 
 const world = new World();
 
-setInterval(async () => {
-    console.log('--- [서버 자동 턴 진행] ---');
-    // 30분씩 시간을 흐르게 합니다.
-    world.situation.currentMinute += 30;
-    if (world.situation.currentMinute >= 60) {
-        world.situation.currentMinute = 0;
-        world.situation.currentHour++;
-        if (world.situation.currentHour >= 24) {
-            world.situation.currentHour = 0;
-            world.situation.day++;
-        }
-    }
+// setInterval(async () => {
+//     console.log('--- [서버 자동 턴 진행] ---');
+//     // 30분씩 시간을 흐르게 합니다.
+//     world.situation.currentMinute += 30;
+//     if (world.situation.currentMinute >= 60) {
+//         world.situation.currentMinute = 0;
+//         world.situation.currentHour++;
+//         if (world.situation.currentHour >= 24) {
+//             world.situation.currentHour = 0;
+//             world.situation.day++;
+//         }
+//     }
     
-    await world.nextTurn();
-    world.save(); // 매 턴마다 월드 상태를 저장합니다.
-}, 5000); // 5000ms = 5초
+//     await world.nextTurn();
+//     world.save(); // 매 턴마다 월드 상태를 저장합니다.
+// }, 5000); // 5000ms = 5초
 
 const app = express();
 const PORT = 3000;
@@ -35,6 +35,45 @@ app.use(express.static('public'));
 
 const apiRouter = setupRoutes(world);
 app.use(apiRouter);
+
+let simulationRunning = false;
+let simulationInterval = null;
+
+// 시뮬레이션 시작 API
+app.post('/api/start-simulation', (req, res) => {
+    if (!simulationRunning) {
+        simulationRunning = true;
+        simulationInterval = setInterval(async () => {
+            await world.nextTurn();
+        }, 10000);
+        console.log('시뮬레이션 시작됨');
+    }
+    res.json({ success: true, running: simulationRunning });
+});
+
+// 시뮬레이션 정지 API  
+app.post('/api/stop-simulation', (req, res) => {
+    if (simulationRunning) {
+        simulationRunning = false;
+        clearInterval(simulationInterval);
+        console.log('시뮬레이션 정지됨');
+    }
+    res.json({ success: true, running: simulationRunning });
+});
+
+// ⭐ 추가할 API 엔드포인트들
+app.get('/api/get-world-state', (req, res) => {
+    res.json({
+        characters: world.characterDatabase,
+        situation: world.situation,
+        mainEvents: [] // 나중에 로그 시스템 추가
+    });
+});
+
+app.post('/api/reset-simulation', (req, res) => {
+    // 시뮬레이션 리셋 로직
+    res.json({ success: true });
+});
 
 app.post('/api/reset-simulation', (req, res) => {
     console.log('🔄 시뮬레이션 데이터 리셋 요청 수신');

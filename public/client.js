@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // [수정] initializeSimulationData, gameLoop, processTimeStep 함수를 모두 이 함수로 통합합니다.
 async function fetchAndUpdate() {
-    // [추가] isRunning이 false이면 (일시정지 상태이면) 서버에 아무것도 물어보지 않습니다.
-    if (!gameState.isRunning) {
+    // 초기 로드는 항상 허용, 이후에는 isRunning 상태 확인
+    if (!gameState.isRunning && gameState.initialized) {
         return;
     }
 
@@ -67,29 +67,48 @@ async function fetchAndUpdate() {
             gameState.mainEvents = serverWorld.mainEvents;
             updateMainLog();
         }
-
+        // 첫 번째 로드 완료 표시
+        gameState.initialized = true;
     } catch (error) {
         console.error("월드 상태 업데이트 오류:", error);
     }
 }
 
 // =======================================================================
-// [3] 시뮬레이션 제어 (이제 UI 업데이트만 제어)
+// [3] 시뮬레이션 제어 
 // =======================================================================
-function startSimulation() {
-    gameState.isRunning = true;
-    document.getElementById('startBtn').disabled = true;
-    document.getElementById('pauseBtn').disabled = false;
-    document.getElementById('simulationStatus').textContent = '실행 중';
-    addMainEvent('🚀 화면 업데이트를 시작합니다!', 'event');
+async function startSimulation() {
+    try {
+        const response = await fetch('/api/start-simulation', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.success) {
+            gameState.isRunning = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('pauseBtn').disabled = false;
+            document.getElementById('simulationStatus').textContent = '실행 중';
+            addMainEvent('🚀 시뮬레이션을 시작합니다!', 'event');
+        }
+    } catch (error) {
+        console.error('시뮬레이션 시작 오류:', error);
+    }
 }
-
-function pauseSimulation() {
-    gameState.isRunning = false;
-    document.getElementById('startBtn').disabled = false;
-    document.getElementById('pauseBtn').disabled = true;
-    document.getElementById('simulationStatus').textContent = '일시정지';
-    addMainEvent('⏸️ 화면 업데이트를 중지합니다.', 'event');
+ 
+async function pauseSimulation() {
+    try {
+        const response = await fetch('/api/stop-simulation', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.success) {
+            gameState.isRunning = false;
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+            document.getElementById('simulationStatus').textContent = '일시정지';
+            addMainEvent('⏸️ 시뮬레이션을 일시정지합니다.', 'event');
+        }
+    } catch (error) {
+        console.error('시뮬레이션 정지 오류:', error);
+    }
 }
 
 async function resetSimulation() {
@@ -374,7 +393,10 @@ function createRelationshipSection(character) {
 }
 
 function addMainEvent(message, type) {
-    const timeStr = `${gameState.currentTime.toString().padStart(2, '0')}:${gameState.currentMinute.toString().padStart(2, '0')}`;
+    const currentTime = gameState.currentTime || 0;
+    const currentMinute = gameState.currentMinute || 0;
+    const timeStr = `${currentTime.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}`;
+    // const timeStr = `${gameState.currentTime.toString().padStart(2, '0')}:${gameState.currentMinute.toString().padStart(2, '0')}`;
     gameState.mainEvents.unshift({ time: timeStr, content: message, type });
     if (gameState.mainEvents.length > 50) gameState.mainEvents.pop();
     updateMainLog();

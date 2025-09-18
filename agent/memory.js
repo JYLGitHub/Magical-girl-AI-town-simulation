@@ -1,7 +1,7 @@
 // 📍 memory.js
 
 const { callLLM } = require('../utils/llm.js');
-
+const { truncateText } = require('../utils/logger.js');
 
 function retrieveMemories(character, situationContext) {
     if (!character.journal || character.journal.length === 0) {
@@ -37,7 +37,8 @@ async function searchRelevantMemories(character, currentContext, provider) {
     
     console.log(`[기억 검색] ${character.name} - 후보 기억 ${candidateMemories.length}개:`);
     candidateMemories.forEach((m, i) => {
-        console.log(`  ${i+1}. ${m.description} (점수: ${m.score?.toFixed(2)})`);
+        const truncatedDesc = truncateText(m.description || m.activity);
+        console.log(`  ${i+1}. ${truncatedDesc} (점수: ${m.score?.toFixed(2)})`);
     });
 
     // 2. LLM을 통한 관련성 평가
@@ -64,6 +65,11 @@ ${memoryList}
             const selectedIndices = JSON.parse(arrayMatch[0]);
             const selectedMemories = selectedIndices.map(i => candidateMemories[i - 1]).filter(Boolean);
             console.log(`[기억 검색] ${character.name} - ${candidateMemories.length}개 중 ${selectedMemories.length}개 선택`);
+            console.log(` ${character.name} - 최종 선택된 기억:`);
+            selectedMemories.forEach(m => {
+                const truncatedDesc = truncateText(m.description || m.activity);
+                console.log(`  - ${truncatedDesc}`);
+            });
             return selectedMemories;
         }
         return candidateMemories.slice(0, 3); // 파싱 실패시 기존 방식

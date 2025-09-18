@@ -57,3 +57,16 @@ console.error = function(...args) {
     originalError.apply(console, args);
     logStream.write(`[ERROR] [${timestamp}] ${message}\n`);
 };
+
+//텍스트 길이를 제한하는 유틸리티 함수
+function truncateText(text, maxLength = 20) {
+    if (!text || typeof text !== 'string') return text;
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+}
+
+function truncateArray(arr, maxItems = 3) {
+    if (!arr || !Array.isArray(arr)) return arr;
+    return arr.length > maxItems ? [...arr.slice(0, maxItems), '...'] : arr;
+}
+
+module.exports = { truncateText, truncateArray };
