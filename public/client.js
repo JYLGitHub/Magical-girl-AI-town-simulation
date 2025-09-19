@@ -191,15 +191,13 @@ function getLLMConfigs() {
 function updateCharacterCards() {
     const grid = document.getElementById('charactersGrid');
     if (!grid) return;
-    // 캐릭터 카드를 다시 그릴 때, 현재 DOM에 있는 카드의 isExpanded 상태를 gameState에 먼저 저장합니다.
-    const expandedStates = {};
-    document.querySelectorAll('.character-card').forEach(card => {
-        expandedStates[card.dataset.charId] = card.classList.contains('expanded');
-    });
+    
     grid.innerHTML = '';
     Object.values(gameState.characters).forEach(character => {
-        // 저장해둔 expanded 상태를 다시 적용합니다.
-        character.isExpanded = expandedStates[character.id] || false;
+        // isExpanded 상태를 건드리지 않고 그대로 사용
+        if (character.isExpanded === undefined) {
+            character.isExpanded = false;
+        }
         grid.appendChild(createCharacterCard(character));
     });
 }
@@ -292,9 +290,19 @@ function createCharacterCard(character) {
 }
 
 function toggleCharacter(characterId) {
+    console.log('toggleCharacter 호출됨:', characterId); // 디버깅용
+    
     if (gameState.characters[characterId]) {
-        gameState.characters[characterId].isExpanded = !gameState.characters[characterId].isExpanded;
+        const currentState = gameState.characters[characterId].isExpanded;
+        gameState.characters[characterId].isExpanded = !currentState;
+        
+        console.log(`상태 변경: ${currentState} → ${!currentState}`); // 디버깅용
+        
         updateCharacterCards();
+        
+        console.log('updateCharacterCards 호출 완료'); // 디버깅용
+    } else {
+        console.error('캐릭터를 찾을 수 없음:', characterId);
     }
 }
 

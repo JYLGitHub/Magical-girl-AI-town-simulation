@@ -274,17 +274,37 @@ async function generateFreeAction(character, world) {
     try {
         const rawResponse = await callLLM(prompt, world.llmConfigs[character.id]?.provider);
         
-        // 간단한 JSON 추출 및 정리
-        let jsonStr = rawResponse.match(/\{[\s\S]*\}/)?.[0];
-        if (!jsonStr) throw new Error("JSON 형식을 찾을 수 없음");
+        // 더 강력한 JSON 추출
+        let jsonStr = '';
         
-        // JSON 끝 이후 텍스트 제거 (가장 마지막 } 이후 자르기)
-        const lastBrace = jsonStr.lastIndexOf('}');
-        if (lastBrace !== -1) {
-            jsonStr = jsonStr.substring(0, lastBrace + 1);
+        // 첫 번째 { 찾기
+        const startIndex = rawResponse.indexOf('{');
+        if (startIndex === -1) {
+            throw new Error('JSON 시작 부분을 찾을 수 없음');
         }
         
+        // 마지막 } 찾기 (중첩된 객체 고려)
+        let braceCount = 0;
+        let endIndex = -1;
+        
+        for (let i = startIndex; i < rawResponse.length; i++) {
+            if (rawResponse[i] === '{') braceCount++;
+            else if (rawResponse[i] === '}') {
+                braceCount--;
+                if (braceCount === 0) {
+                    endIndex = i;
+                    break;
+                }
+            }
+        }
+        
+        if (endIndex === -1) {
+            throw new Error('JSON 끝 부분을 찾을 수 없음');
+        }
+        
+        jsonStr = rawResponse.substring(startIndex, endIndex + 1);
         return JSON.parse(jsonStr);
+        
     } catch (error) {
         console.error(`[LLM 파싱 오류] ${character.name}: ${error.message}`);
         return { 
