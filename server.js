@@ -9,23 +9,6 @@ const setupRoutes = require('./routes.js');
 
 const world = new World();
 
-// setInterval(async () => {
-//     console.log('--- [서버 자동 턴 진행] ---');
-//     // 30분씩 시간을 흐르게 합니다.
-//     world.situation.currentMinute += 30;
-//     if (world.situation.currentMinute >= 60) {
-//         world.situation.currentMinute = 0;
-//         world.situation.currentHour++;
-//         if (world.situation.currentHour >= 24) {
-//             world.situation.currentHour = 0;
-//             world.situation.day++;
-//         }
-//     }
-    
-//     await world.nextTurn();
-//     world.save(); // 매 턴마다 월드 상태를 저장합니다.
-// }, 5000); // 5000ms = 5초
-
 const app = express();
 const PORT = 3000;
 app.use(cors());
@@ -44,19 +27,50 @@ app.post('/api/start-simulation', (req, res) => {
     if (!simulationRunning) {
         simulationRunning = true;
         simulationInterval = setInterval(async () => {
-            await world.nextTurn();
-        }, 10000);
-        console.log('시뮬레이션 시작됨');
+        // console.log('--- [서버 자동 턴 진행] ---');
+            
+            // 1단계: 시간 증가
+            updateWorldTime();
+            
+            // 2단계: 턴 실행 (순차 처리)
+            await runWorldStep();
+            
+            // 3단계: 저장
+            world.save();
+        }, 5000); // 5초마다
+        
+    console.log('▶ 시뮬레이션 시작됨');
     }
     res.json({ success: true, running: simulationRunning });
 });
 
-// 시뮬레이션 정지 API  
+function updateWorldTime() {
+    world.situation.currentMinute += 30;
+    if (world.situation.currentMinute >= 60) {
+        world.situation.currentMinute = 0;
+        world.situation.currentHour++;
+        if (world.situation.currentHour >= 24) {
+            world.situation.currentHour = 0;
+            world.situation.day++;
+        }
+    }
+}
+
+async function runWorldStep() {
+    // AI Town 방식: 순차 실행
+    // 1. 모든 캐릭터 액션 생성
+    const actions = await world.getAllCharacterActions();
+    
+    // 2. 액션 처리 완료까지 대기
+    await world.processAllActions(actions);
+}
+
+// 시뮬레이션 정지 API
 app.post('/api/stop-simulation', (req, res) => {
     if (simulationRunning) {
-        simulationRunning = false;
         clearInterval(simulationInterval);
-        console.log('시뮬레이션 정지됨');
+        simulationRunning = false;
+        console.log('⚠ 시뮬레이션 정지됨');
     }
     res.json({ success: true, running: simulationRunning });
 });
@@ -68,11 +82,6 @@ app.get('/api/get-world-state', (req, res) => {
         situation: world.situation,
         mainEvents: [] // 나중에 로그 시스템 추가
     });
-});
-
-app.post('/api/reset-simulation', (req, res) => {
-    // 시뮬레이션 리셋 로직
-    res.json({ success: true });
 });
 
 app.post('/api/reset-simulation', (req, res) => {

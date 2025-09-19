@@ -46,12 +46,14 @@ async function makeImmediateDecision(character, world, context, observations) {
     if (observations.myConversation) {
         if (observations.myConversation.turnHolder === character.id) {
             console.log(`[행동 결정] ${character.name} - 대화 응답 생성`);
-            return await generateConversationResponse(character, world);
+            const action = await generateConversationResponse(character, world);
+            return { ...action, charId: character.id };
         } else {
             console.log(`[행동 결정] ${character.name} - 대화 듣기`);
             return {
                 actionName: 'listen',
-                content: `${observations.myConversation.participants.join(', ')}의 대화를 듣고 있습니다.`
+                content: `${observations.myConversation.participants.join(', ')}의 대화를 듣고 있습니다.`,
+                charId: character.id
             };
         }
     }
@@ -59,7 +61,8 @@ async function makeImmediateDecision(character, world, context, observations) {
     // 자유 행동 결정
     if (shouldUseAI(character, world)) {
         console.log(`[행동 결정] ${character.name} - AI 모드로 자유 행동`);
-        return await generateFreeAction(character, world);
+        const action = await generateFreeAction(character, world);
+        return { ...action, charId: character.id };
     } else {
         console.log(`[행동 결정] ${character.name} - 스크립트 모드`);
         const scriptPlan = processWithScript(character, world.situation);
@@ -68,7 +71,8 @@ async function makeImmediateDecision(character, world, context, observations) {
             location: scriptPlan.location,
             status: scriptPlan.status,
             content: scriptPlan.content,
-            thoughts: scriptPlan.thoughts
+            thoughts: scriptPlan.thoughts,
+            charId: character.id
         };
     }
 }
@@ -77,52 +81,11 @@ async function runAgent(character, world) {
     return await agentTick(character, world);
 }
 
-// async function runAgent(character, world) {
-//     // 1. 관찰 단계
-//     const observations = observe(character, world);
-//     const context = buildContext(character, observations);
-    
-//     // 2. 기존 think 함수의 시작 부분 로직
-//     const { situation, llmConfigs, activeConversations, characterDatabase } = world;
-
-//     if (situation.currentHour === 0 && situation.currentMinute < 30 && character.reflectedOnDay !== situation.day) {
-//         await reflectOnMemories(character, world);
-//         await createDailyPlan(character, world);
-//         character.reflectedOnDay = situation.day;
-//     }
-
-//     const currentConv = activeConversations.find(c => c.id === character.conversationId);
-//     if (currentConv) {
-//         if (currentConv.turnHolder === character.id) {
-//             return await generateConversationResponse(character, world);
-//         } else {
-//             return {
-//                 actionName: 'listen',
-//                 content: `${currentConv.participants.map(pId=>characterDatabase[pId]?.name).join(', ')}의 대화를 듣고 있습니다.`
-//             };
-//         }
-//     }
-
-//     if (shouldUseAI(character, world)) {
-//         return await generateFreeAction(character, world);
-//     } else {
-//         const scriptPlan = processWithScript(character, situation);
-//         return {
-//             actionName: 'script',
-//             location: scriptPlan.location,
-//             status: scriptPlan.status,
-//             content: scriptPlan.content,
-//             thoughts: scriptPlan.thoughts
-//         };
-//     }
-// }
-
 // =======================================================================
 // AI의 '장기적 사고' 기능들
 // =======================================================================
 
-//성찰
-
+//성찰(기간 수정필요)
 async function reflectOnMemories(character, world) {
     const recentMemories = character.journal.slice(-20);
     if (recentMemories.length < 5) return;
@@ -153,7 +116,17 @@ async function createDailyPlan(character, world) {
     const situationContext = { nearbyCharacterNames: [] };
     const relevantMemories = retrieveMemories(character, situationContext).slice(0, 5);
     const memoryContext = relevantMemories.map(m => `- ${m.description}`).join('\n');
-    const prompt = `당신은 '${character.name}'입니다. 당신의 기본 정보와 최근 성찰은 다음과 같습니다.\n[기본 정보]\n- 역할: ${character.role}\n- 성격: ${character.personality}\n\n[최근 중요 기억/성찰]\n${memoryContext}\n\n[임무]\n위 정보를 바탕으로, 오늘 하루 동안 무엇을 할지에 대한 대략적인 계획을 아침/점심/저녁으로 나누어 한두 문장으로 작성하세요.`;
+    const prompt = `당신은 '${character.name}'입니다. 당신의 기본 정보와 최근 성찰은 다음과 같습니다.
+    [기본 정보]
+    - 역할: ${character.role}
+    - 성격: ${character.personality}
+    
+    [최근 중요 기억/성찰]
+    ${memoryContext}
+    
+    [임무]
+    위 정보를 바탕으로, 오늘 하루 동안 무엇을 할지에 대한 대략적인 계획을 아침/점심/저녁으로 나누어 한두 문장으로 작성하세요.`;
+
     try {
         const provider = world.llmConfigs[character.id]?.provider || 'gemini';
         const planText = await callLLM(prompt, provider);
@@ -175,22 +148,69 @@ async function generateConversationResponse(character, world) {
     const currentConversation = activeConversations.find(conv => conv.id === character.conversationId);
     const provider = llmConfigs[character.id]?.provider || 'gemini';
 
-    const otherParticipantNames = currentConversation.participants
+    const otherParticipants = currentConversation.participants
         .filter(pId => pId !== character.id)
-        .map(pId => characterDatabase[pId]?.name || '??');
+        .map(pId => characterDatabase[pId])
+        .filter(Boolean);
+
+    const nearbyCharacters = Object.values(characterDatabase).filter(c => c.id !== character.id && c.location === character.location);
+    const otherParticipantNames = otherParticipants.map(p => p.name);
+    const situationContext = { nearbyCharacterNames: otherParticipantNames };
+    const relevantMemories = require('./memory.js').retrieveMemories(character, situationContext).slice(0, 3);
+    const memoryContext = relevantMemories.length > 0
+        ? `[관련 기억]\n` + relevantMemories.map(m => `- ${m.description}`).join('\n')
+        : '[특별히 떠오르는 기억이 없습니다.]';
+
+    const participantInfo = otherParticipants.map(other => {
+        const relationshipInfo = getRelationshipContext(character, other.name);
+        return `- ${other.name}: ${other.role}, ${relationshipInfo}`;
+    }).join('\n');
     
     const conversationLog = currentConversation.log
         .map(entry => `${characterDatabase[entry.speaker]?.name || '???'}: "${entry.content}"`)
         .join('\n');
 
+    const timeContext = `현재 시간: Day ${situation.day}, ${situation.currentHour}:${situation.currentMinute.toString().padStart(2, '0')}`;
+    const nearbyContext = `주변 인물: ${nearbyCharacters.map(c => c.name).join(', ') || '없음'}`;
+    const allCharactersContext = `[월드에 있는 모든 캐릭터 목록]\n` + Object.values(characterDatabase).map(c => `- ${c.name} (현재 위치: ${c.location})`).join('\n');
+    const locationNames = Object.keys(locations).join(', ');
+
     const prompt = `당신은 '${character.name}'입니다. 당신은 지금 [${otherParticipantNames.join(', ')}]와(과) 대화하고 있습니다.
+
+    [당신의 정체성]
+    - 역할: ${character.role}
+    - 성격: ${character.personality}
+
+    [대화 상대방 정보]
+    ${participantInfo}
+    
+    [현재 당신의 상태]
+    - 현재 기분: ${character.mood}
+    - 에너지 레벨: ${character.energy} / 100
+    - 스트레스 지수: ${character.stress} / 100
+    - 사회적 욕구: ${character.socialNeed} / 100
+    - 현재 상태: ${character.status} (위치: ${character.location})
+
+    ${memoryContext}
+
+    [현재 상황]
+    ${timeContext} (24시간제)
+    ${nearbyContext}
+    ${allCharactersContext}
+
+    [선택 가능한 장소 목록]
+    ${locationNames}
 
     [대화 기록]
     ${conversationLog}
 
     [당신의 임무]
-    당신의 역할과 대화의 흐름을 고려하여 다음 할 말을 결정하세요.
-    만약 작별 인사를 하거나 대화를 끝내고 싶다면, 반드시 'leaveConversation' 액션을 사용해야 합니다.
+    당신의 프로필, 역할과 성격은 당신의 '정체성'이며, 모든 행동의 최우선 기준입니다.
+    **당신의 정체성과 상대방의 프로필, 상대방과의 관계, 그리고 대화의 흐름을 고려하여 다음 할 말을 결정하세요.**
+    - 당신의 현재 기분과 상태를 행동과 대화에 자연스럽게 드러내세요. 예를 들어, 에너지가 낮다면 "(피곤한 목소리로) 안녕..."과 같이 말할 수 있습니다.
+    - 대화는 영원히 지속될 수 없습니다. 할 말이 떨어졌거나, 다른 할 일이 생각났거나, 대화가 충분히 길어졌다고 판단되면 "leaveConversation" 액션을 사용해 자연스럽게 대화를 마무리하세요.
+    대화를 끝내고 싶거나, 작별 인사를 했다면 반드시 'leaveConversation' 액션을 사용해야 합니다.
+    - 대화는 핑퐁이 되어야 합니다. 대사가 너무 길어지면 상대방이 지루해 할 수 있습니다.
 
     [출력 형식]
     - 대화를 계속 이어갈 경우:
@@ -216,6 +236,7 @@ async function generateFreeAction(character, world) {
 
     // 대화 중이 아닐 때 로직
     const nearbyCharacters = Object.values(characterDatabase).filter(c => c.id !== character.id && c.location === character.location);
+    
     const situationContext = { nearbyCharacterNames: nearbyCharacters.map(c => c.name) };
     const relevantMemies = await searchRelevantMemories(character, situationContext, provider);
     
@@ -228,19 +249,30 @@ async function generateFreeAction(character, world) {
     const allCharactersContext = `[월드에 있는 모든 캐릭터 목록]\n` + Object.values(characterDatabase).map(c => `- ${c.name} (현재 위치: ${c.location})`).join('\n');
     const locationNames = Object.keys(locations).join(', ');
 
+    // ⭐ 주변인 정보 수정 (nearbyCharacters가 비어있을 때 처리)
+    const participantInfo = nearbyCharacters.length > 0 
+        ? nearbyCharacters.map(other => {
+            const relationshipInfo = getRelationshipContext(character, other.name);
+            return `- ${other.name}: ${other.role}, ${relationshipInfo}`;
+          }).join('\n')
+        : '주변에 아무도 없습니다.';
+
  // 자유 행동용 프롬프트
-    const prompt = `당신은 '${character.name}'입니다. 당신의 성격, 현재 감정 상태, 그리고 떠오른 기억들을 바탕으로 다음에 무엇을 할지 결정하세요.
+    const prompt = `당신은 '${character.name}'입니다. 당신의 정체성, 현재 감정 상태, 현재 상황, 그리고 떠오른 기억들을 바탕으로 다음에 무엇을 할지 결정하세요.
 
-    [당신의 프로필]
-    - 성격: ${character.personality}
+    [당신의 정체성]
     - 역할: ${character.role}
-
+    - 성격: ${character.personality}
+    
     [현재 당신의 상태]
     - 현재 기분: ${character.mood}
     - 에너지 레벨: ${character.energy} / 100
     - 스트레스 지수: ${character.stress} / 100
     - 사회적 욕구: ${character.socialNeed} / 100
     - 현재 상태: ${character.status} (위치: ${character.location})
+
+    [주변인 정보]
+    ${participantInfo}
 
     ${memoryContext}
 
@@ -253,21 +285,19 @@ async function generateFreeAction(character, world) {
     ${locationNames}
 
     [행동 규칙]
-    - 당신의 역할과 성격은 모든 행동의 최우선 기준입니다.
-    - **중요: 약속이 있다면 반드시 약속을 지켜야 합니다. 약속 시간이 되면 다른 모든 활동을 중단하고 약속 장소로 이동해야 합니다.**
-    - 약속 장소로 이동할 때는 반드시 "targetLocation"에 약속 장소를 지정하세요.
-    - 당신의 모든 행동은 당신의 성격과 현재 상태(에너지, 스트레스, 사회적 욕구)에 큰 영향을 받습니다. 예를 들어, 스트레스가 높고 에너지가 낮다면 중요한 약속도 취소하거나 미루고 싶을 수 있습니다.
+    - 당신의 프로필, 역할과 성격은 당신의 '정체성'이며, 모든 행동의 최우선 기준입니다.
+    - 당신의 모든 행동은 당신의 정체성과 현재 상태(에너지, 스트레스, 사회적 욕구)에 큰 영향을 받습니다. 예를 들어, 스트레스가 높고 에너지가 낮다면 중요한 약속도 취소하거나 미루고 싶을 수 있습니다.
+    - 대화를 걸 때는 **당신의 정체성과 상대방의 프로필, 상대방과의 관계, 현재 상황 및 대화 목적을 고려하여 다음 할 말을 결정하세요.**
     - 당신의 현재 기분과 상태를 행동과 대화에 자연스럽게 드러내세요. 예를 들어, 에너지가 낮다면 "(피곤한 목소리로) 안녕..."과 같이 말할 수 있습니다.
-    - 대화는 영원히 지속될 수 없습니다. 할 말이 떨어졌거나, 다른 할 일이 생각났거나, 대화가 충분히 길어졌다고 판단되면 "leaveConversation" 액션을 사용해 자연스럽게 대화를 마무리하세요.
-    - 당신의 이름은 '${character.name}'입니다. 절대로 자기 자신에게 말을 걸거나 메시지를 보내지 마세요.
     - 혼잣말을 하고 싶을 때는 반드시 "actionName": "talkToSelf"를 사용하세요.
     - 이동하거나 약속 장소를 정할 때는, 반드시 [선택 가능한 장소 목록]에 있는 이름만 사용해야 합니다.
+    - 메시지는 다른 장소에 있는 사람과의 소통을 위한 원거리 통신 수단입니다. 절대 같은 장소의 사람에게 메시지를 보내지 마세요.
 
     [출력 형식 규칙]
     {
-    "thoughts": "당신의 생각의 흐름을 적으세요.",
+    "thoughts": "당신의 생각의 흐름을 적으세요(3문장 이내).",
     "actionName": "startConversation | sendMessage | talkToSelf | script 등...",
-    "content": "첫 대화 내용 또는 행동에 대한 묘사",
+    "content": "첫 대화 내용 또는 행동에 대한 묘사(3문장 이내)",
     "target": ["대상이 있다면 이름"],
     "targetLocation": "이동할 장소 이름"
     }`;
@@ -303,10 +333,13 @@ async function generateFreeAction(character, world) {
         }
         
         jsonStr = rawResponse.substring(startIndex, endIndex + 1);
+
+        console.log(`[추출된 JSON] ${character.name}:`, jsonStr); // 🔥 추출된 JSON 확인
         return JSON.parse(jsonStr);
         
     } catch (error) {
         console.error(`[LLM 파싱 오류] ${character.name}: ${error.message}`);
+        console.error(`[원본 응답]`, rawResponse); // 🔥 오류 시 원본 확인
         return { 
             thoughts: `파싱 오류: ${error.message}`, 
             actionName: "talkToSelf", 
@@ -340,7 +373,7 @@ function shouldUseAI(character, world) {
     if (isEssential) {
         aiProbability = 0.03;
     } else if (isFreeTime) {
-        aiProbability = 0.85;
+        aiProbability = 1;
     }
 
     const nearbyCharacters = Object.values(world.characterDatabase).filter(c => c.id !== character.id && c.location === character.location && !c.conversationId);

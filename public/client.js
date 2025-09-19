@@ -117,8 +117,20 @@ async function resetSimulation() {
     pauseSimulation();
     
     try {
-        await fetch('/api/reset-simulation', { method: 'POST' });
-        location.reload(); // 페이지 새로고침으로 초기화
+        const response = await fetch('/api/reset-simulation', { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data.message);
+            location.reload(); // 페이지 새로고침으로 초기화
+        } else {
+            console.error('리셋 실패');
+        }
     } catch (error) {
         console.error('리셋 오류:', error);
     }

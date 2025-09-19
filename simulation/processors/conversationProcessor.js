@@ -138,12 +138,14 @@ async function handleLeaveConversation(action, world) {
 }
 
 function handleListen(action, world) {
-    // content를 더 사용자 친화적으로 변환
+    const { characterDatabase } = world;
     let description = action.content;
-    if (description.includes('char1, char2의 대화를 듣고 있습니다.')) {
-        const { characterDatabase } = world;
-        description = `${characterDatabase.char1?.name}, ${characterDatabase.char2?.name}의 대화를 듣고 있습니다.`;
-    }
+    
+    // charX를 실제 이름으로 변환만 하면 됨
+    description = description.replace(/char(\d+)/g, (match, num) => {
+        const charId = `char${num}`;
+        return characterDatabase[charId]?.name || match;
+    });
     
     return {
         success: true,

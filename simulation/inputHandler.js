@@ -25,6 +25,10 @@ async function processActions(actions, world) {
 
     for (const starter of conversationStarters) {
         const initiator = characterDatabase[starter.charId];
+        if (!initiator) {
+            console.warn(`캐릭터를 찾을 수 없음: ${starter.charId}`);
+            continue;
+        }
         if (initiator.conversationId) continue;
 
         const targets = starter.target

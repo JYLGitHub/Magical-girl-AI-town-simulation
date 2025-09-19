@@ -1,7 +1,7 @@
 // core/engine.js
 const { runAgent } = require('../agent/think.js');
 const { processActions } = require('../simulation/inputHandler.js');
-const { updateCharacterStats } = require('../simulation/status.js');
+// const { updateCharacterStats } = require('../simulation/status.js');
 const { loadWorld, saveWorld, initializeWorld } = require('./world.js');
 
 class World {
@@ -25,15 +25,23 @@ class World {
         require('./world.js').saveWorld(worldData);
     }
 
-    async nextTurn() {
-        const agentActions = [];
+    async getAllCharacterActions() {
+        const actions = [];
         for (const character of Object.values(this.characterDatabase)) {
             const action = await runAgent(character, this);
-            agentActions.push({ ...action, charId: character.id });
+            actions.push(action);
         }
-        
-        console.log("\n--- [1단계: 모든 캐릭터 액션 생성 완료] ---");
-        await processActions(agentActions, this);
+        return actions;
+    }
+
+    async processAllActions(actions) {
+        // 기존 processActions 호출하되 완료까지 대기
+        return await processActions(actions, this);
+    }
+
+    async nextTurn() {
+        // AI Town 방식: 더 이상 직접 캐릭터 처리하지 않음
+        console.log('Turn completed');
     }
 }
 
