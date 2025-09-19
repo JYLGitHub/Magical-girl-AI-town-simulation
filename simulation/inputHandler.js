@@ -64,7 +64,7 @@ async function processActions(actions, world) {
         addMessageToConversation(newConv, firstSpeakerId, firstSpeakerAction.content, nextSpeakerId);
         const targetNames = firstSpeakerAction.target.join(', ');
         const truncatedContent = truncateText(firstSpeakerAction.content);
-        actionLogs.push({ charId: firstSpeakerId, description: `${targetNames}에게 대화 시작: "${truncatedContent}"` });
+        actionLogs.push({ charId: firstSpeakerId, description: `${targetNames}에게 대화 시작: "${firstSpeakerAction.content}"` });
     }
 
     // --- 3. 개별 액션 처리 (기존 로직 유지) ---
@@ -89,7 +89,7 @@ async function processActions(actions, world) {
                 }
                 addMessageToConversation(conv, character.id, action.content, nextSpeakerId);
                 const truncatedContent = truncateText(action.content);
-                description = `대화 중: "${truncatedContent}"`;
+                description = `대화 중: "${action.content}"`;
 
             } else if (action.actionName === 'leaveConversation') {
                 description = `${action.content || '대화를 떠났습니다.'}`;

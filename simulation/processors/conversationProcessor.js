@@ -67,7 +67,7 @@ async function handleStartConversation(action, world) {
         success: true,
         actionLog: { 
             charId: initiator.id, 
-            description: `${targetNames}와 대화 시작: "${truncatedContent}"` 
+            description: `${targetNames}과(와) 대화 시작: "${truncatedContent}"` 
         }
     };
 }
@@ -97,7 +97,7 @@ async function handleContinueConversation(action, world) {
         success: true,
         actionLog: { 
             charId: character.id, 
-            description: `대화 중: ` 
+            description: `대화 중: "${truncatedContent}"` 
         }
     };
 }
