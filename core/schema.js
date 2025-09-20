@@ -17,7 +17,8 @@ function createCharacter(initialData) {
         archetype: initialData.archetype || 'officeWorker',
         
         // 상태 정보
-        location: '집',
+        location: initialData.location || '집', // ⭐ 이렇게 수정
+        homeLocation: initialData.homeLocation || initialData.location || '집', // ⭐ 추가
         status: '휴식',
         currentAction: '대기 중...',
         thoughts: '...',

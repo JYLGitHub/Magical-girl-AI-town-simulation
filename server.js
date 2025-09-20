@@ -80,7 +80,12 @@ app.get('/api/get-world-state', (req, res) => {
     res.json({
         characters: world.characterDatabase,
         situation: world.situation,
-        mainEvents: [] // 나중에 로그 시스템 추가
+        conversations: world.activeConversations.map(conv => ({
+            id: conv.id,
+            participants: conv.participants,
+            recentMessages: conv.log ? conv.log.slice(-3) : [] // 최근 3개 메시지만
+        })),
+        mainEvents: []
     });
 });
 

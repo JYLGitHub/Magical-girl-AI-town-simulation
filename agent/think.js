@@ -143,10 +143,14 @@ async function createDailyPlan(character, world) {
 
 // [핵심] 대화 중일 때의 LLM 프롬프트를 만들고 호출하는 함수
 async function generateConversationResponse(character, world) {
+    console.log(`[디버깅] ${character.name}의 conversationId:`, character.conversationId);
+    console.log(`[디버깅] activeConversations 개수:`, world.activeConversations.length);
+    console.log(`[디버깅] activeConversations IDs:`, world.activeConversations.map(c => c.id));
     // 기존 simulation.js의 'think' 함수에서 "대화 중일 때의 프롬프트" 부분을 가져옵니다.
     const { situation, llmConfigs, activeConversations, characterDatabase } = world;
     const currentConversation = activeConversations.find(conv => conv.id === character.conversationId);
     const provider = llmConfigs[character.id]?.provider || 'gemini';
+    console.log(`[디버깅] ${character.name}의 currentConversation:`, currentConversation ? 'exists' : 'undefined');
 
     const otherParticipants = currentConversation.participants
         .filter(pId => pId !== character.id)
@@ -413,6 +417,13 @@ function applySchedule(character, situation) {
     if (activeSchedule === null && scheduleTimes.length > 0) {
         activeSchedule = dailySchedule[scheduleTimes[scheduleTimes.length - 1]];
     }
+        if (activeSchedule && activeSchedule.location === "home") {
+        activeSchedule = {
+            ...activeSchedule,
+            location: character.homeLocation || character.location
+        };
+    }
+
     return activeSchedule;
 }
 
