@@ -388,6 +388,36 @@ function updateCharacterCount() {
     if (charCount) charCount.textContent = `(${Object.keys(gameState.characters).length}명)`;
 }
 
+function getRelationshipDisplay(rel) {
+    if (rel.relationshipType && rel.relationshipType !== '처음 만난 사람') {
+        return {
+            primary: rel.relationshipType,
+            icon: getRelationshipIcon(rel)
+        };
+    }
+    
+    const trust = rel.trust || 50;
+    const respect = rel.respect || 50;
+    const affection = rel.affection || 50;
+    const familiarity = rel.familiarity || 10;
+    
+    if (trust > 80 && respect > 80) return { primary: '존경하며 신뢰하는 사이', icon: '🤝' };
+    if (affection > 80 && familiarity > 70) return { primary: '매우 가까운 친구', icon: '💕' };
+    if (trust < 30 && affection > 60) return { primary: '좋아하지만 불안한 관계', icon: '😅' };
+    if (respect > 70 && familiarity < 30) return { primary: '존경하지만 어색한 사이', icon: '😊' };
+    if (affection < 30) return { primary: '불편한 관계', icon: '😞' };
+    
+    return { primary: '알아가는 중', icon: '🙂' };
+}
+
+function getRelationshipIcon(rel) {
+    if (rel.rivalry > 50) return '⚡';
+    if (rel.dependency > 60) return '🤗';
+    if ((rel.trust + rel.respect) / 2 > 75) return '🤝';
+    if (rel.affection > 70) return '💕';
+    return '🙂';
+}
+
 function createRelationshipSection(character) {
     if (!character.relationships || Object.keys(character.relationships).length === 0) {
         return `
@@ -397,33 +427,29 @@ function createRelationshipSection(character) {
             </div>`;
     }
 
+    
     let relationshipHTML = `
         <div class="detail-section">
             <div class="detail-title">인간관계</div>
             <div class="relationships-list">`;
 
     Object.entries(character.relationships).forEach(([name, rel]) => {
-        let relationshipStatus = '';
-        if (rel.affection > 85) relationshipStatus = '💕 매우 친함';
-        else if (rel.affection > 65) relationshipStatus = '😊 친함';
-        else if (rel.affection > 30) relationshipStatus = '🙂 호감';
-        else if (rel.affection > -10) relationshipStatus = '😐 보통';
-        else relationshipStatus = '😞 불편함';
+        const display = getRelationshipDisplay(rel);
 
         relationshipHTML += `
             <div class="relationship-item">
                 <div class="relationship-header">
                     <span class="relationship-name">${name}</span>
-                    <span class="relationship-status">${relationshipStatus}</span>
+                    <span class="relationship-status">${display.icon} ${display.primary}</span>
                 </div>
                 <div class="relationship-stats">
                     <small>호감도: ${Math.round(rel.affection)} | 신뢰도: ${Math.round(rel.trust)} | 친밀도: ${Math.round(rel.familiarity)}</small>
                 </div>
-                <div class="relationship-type">
-                    <small><strong>관계:</strong> ${rel.relationshipType || '정의되지 않음'}</small>
+                <div class="relationship-details">
+                    <small>${rel.relationshipSummary || '감정 정리 중...'}</small>
                 </div>
-                <div class="relationship-summary">
-                    <small><em>${rel.relationshipSummary || '아직 감정 정리가 안됨'}</em></small>
+                <div class="relationship-stats">
+                    <small>호감 ${Math.round(rel.affection)} | 신뢰 ${Math.round(rel.trust)} | 존경 ${Math.round(rel.respect)}</small>
                 </div>
                 <div class="relationship-stats">
                     <small>대화 횟수: ${rel.conversationCount || 0}회</small>
