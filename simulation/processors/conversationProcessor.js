@@ -61,7 +61,7 @@ async function handleStartConversation(action, world) {
     addMessageToConversation(newConv, initiator.id, action.content, nextSpeakerId);
     
     initiator.currentAction = `(대화) ${action.content}`;
-
+    
     const truncatedContent = truncateText(action.content);
     const targetNames = action.target.join(', ');
     
@@ -95,7 +95,7 @@ async function handleContinueConversation(action, world) {
     addMessageToConversation(conv, character.id, action.content, nextSpeakerId);
 
     character.currentAction = `(대화) ${action.content}`;
-
+    console.log(`[액션 추적] 1. 대화 프로세서: ${character.name}의 currentAction -> "${character.currentAction}"`);
     const truncatedContent = truncateText(action.content);
     
     return {

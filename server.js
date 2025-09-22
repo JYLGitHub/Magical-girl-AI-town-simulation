@@ -77,6 +77,10 @@ app.post('/api/stop-simulation', (req, res) => {
 
 // ⭐ 추가할 API 엔드포인트들
 app.get('/api/get-world-state', (req, res) => {
+    const characterToCheck = world.characterDatabase['char1']; // 확인하고 싶은 캐릭터 ID
+    if (characterToCheck) {
+        console.log(`[액션 추적] 3. API 전송 직전: ${characterToCheck.name}의 currentAction -> "${characterToCheck.currentAction}"`);
+    }
     res.json({
         characters: world.characterDatabase,
         situation: world.situation,

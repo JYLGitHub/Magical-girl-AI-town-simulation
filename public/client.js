@@ -34,7 +34,7 @@ async function fetchAndUpdate() {
 
     try {
         // [수정] 이제 오직 '/api/get-world-state' API만 호출합니다.
-        const response = await fetch('/api/get-world-state');
+        const response = await fetch(`/api/get-world-state?t=${new Date().getTime()}`);
         if (!response.ok) throw new Error('서버 응답 오류');
         
         const serverWorld = await response.json();
@@ -42,6 +42,9 @@ async function fetchAndUpdate() {
         // [수정] 서버에서 받은 최신 데이터로 클라이언트의 gameState 전체를 업데이트합니다.
         // 캐릭터 데이터 업데이트
         for (const charId in serverWorld.characters) {
+            if (serverWorld.characters[charId].name === '구선달') {
+                console.log("서버로부터 받은 '구선달' 데이터:", serverWorld.characters[charId]);
+            }
             // 기존에 있던 isExpanded 같은 클라이언트 전용 상태는 유지하면서 업데이트
             const localChar = gameState.characters[charId] || {};
             gameState.characters[charId] = {

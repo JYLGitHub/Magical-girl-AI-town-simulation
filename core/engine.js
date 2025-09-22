@@ -1,7 +1,7 @@
 // core/engine.js
 const { runAgent } = require('../agent/think.js');
 const { processActions } = require('../simulation/inputHandler.js');
-// const { updateCharacterStats } = require('../simulation/status.js');
+const { updateAllCharacterStats } = require('../simulation/status.js');
 const { loadWorld, saveWorld, initializeWorld } = require('./world.js');
 const { MessageSystem } = require('./messageSystem.js');
 
@@ -43,6 +43,9 @@ class World {
     
     // 메시지 배송 처리
     this.messageSystem.processDeliveries(this);
+
+    // 스탯 업데이트 로직
+    updateAllCharacterStats(actions, this);
     
     return result;
 }

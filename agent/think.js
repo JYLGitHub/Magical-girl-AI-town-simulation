@@ -53,7 +53,7 @@ async function makeImmediateDecision(character, world, context, observations) {
     if (observations.myConversation) {
         if (observations.myConversation.turnHolder === character.id) {
             console.log(`[Decision] ${character.name} - Generating conversation response`);
-            const action = await generateConversationResponse(character, world);
+            const action = await generateConversationResponse(character, world, observations.myConversation);
             return { ...action, charId: character.id };
         } else {
             console.log(`[Decision] ${character.name} - Listening to conversation`);
@@ -150,13 +150,15 @@ async function createDailyPlan(character, world) {
 // =======================================================================
 
 // [Core] Function to create LLM prompt for conversation and call it
-async function generateConversationResponse(character, world) {
-    console.log(`[Debug] ${character.name}'s conversationId:`, character.conversationId);
-    console.log(`[Debug] activeConversations count:`, world.activeConversations.length);
-    console.log(`[Debug] activeConversations IDs:`, world.activeConversations.map(c => c.id));
+async function generateConversationResponse(character, world, currentConversation) {
+    // console.log(`[Debug] ${character.name}'s conversationId:`, character.conversationId);
+    // console.log(`[Debug] activeConversations count:`, world.activeConversations.length);
+    // console.log(`[Debug] activeConversations IDs:`, world.activeConversations.map(c => c.id));
+    console.log(`[디버그] ${character.name}: 전달받은 대화 객체로 응답 생성 시작.`);
+
     
     const { situation, llmConfigs, activeConversations, characterDatabase } = world;
-    const currentConversation = activeConversations.find(conv => conv.id === character.conversationId);
+    // const currentConversation = activeConversations.find(conv => conv.id === character.conversationId);
     const provider = llmConfigs[character.id]?.provider || 'gemini';
     console.log(`[Debug] ${character.name}'s currentConversation:`, currentConversation ? 'exists' : 'undefined');
 
@@ -533,10 +535,15 @@ function processWithScript(character, situation) {
             thoughts: "(특별한 계획 없이 시간을 보내는 중)",
         };
     }
+
+    const scriptContent = `${schedule.status} 중입니다.`;
+    console.log(`[액션 추적] 2. 스크립트 생성: ${character.name}의 스크립트 -> "${scriptContent}" (현재 대화 ID: ${character.conversationId})`);
+
     return {
         location: schedule.location,
         status: schedule.status,
-        content: `${schedule.status} 중입니다.`,
+        content: scriptContent, // 변수로 수정
+        // content: `${schedule.status} 중입니다.`,
         thoughts: "(스크립트에 따라 행동 중)",
     };
 }

@@ -1,18 +1,30 @@
-// 📍 status.js
+// simulation/status.js (수정 완료된 코드)
+
+/**
+ * 모든 캐릭터의 스탯을 업데이트합니다.
+ * @param {Array<object>} allPlans - 모든 캐릭터의 행동 계획 배열
+ * @param {object} world - 월드 객체
+ */
+function updateAllCharacterStats(allPlans, world) {
+    for (const character of Object.values(world.characterDatabase)) {
+        const myPlan = allPlans.find(p => p.charId === character.id);
+        if (myPlan) { // myPlan이 있을 때만 업데이트 실행
+            updateCharacterStats(character, myPlan, world);
+        }
+    }
+}
 
 /**
  * 캐릭터의 행동과 상호작용에 따라 스탯(기분, 에너지 등)을 업데이트합니다.
  * @param {object} character - 업데이트할 캐릭터 객체
  * @param {object} myPlan - 이 캐릭터의 현재 행동 계획
- * @param {object} worldState - 현재 세계의 전체 상태
+ * @param {object} world - 현재 세계의 전체 상태
  */
-// ⭐ allPlans를 myPlan으로 변경하여, 계획 1개만 받도록 수정합니다.
 function updateCharacterStats(character, myPlan, world) {
     if (!myPlan) return;
 
     const actionName = myPlan.actionName || 'script';
-    const actionContent = myPlan.content || ''; // content 필드도 확인
-    // 변수 선언 추가
+    const actionContent = myPlan.content || '';
     let energyChange = 0;
     let stressChange = 0;
     let socialNeedChange = 0;
@@ -43,10 +55,10 @@ function updateCharacterStats(character, myPlan, world) {
         socialNeedChange -= 0.5;
     }
 
-
     // --- 3. 관계 기반 효과 적용 ---
-    if (world && action.interactionTarget) {
-        const targetName = action.interactionTarget;
+    // ▼▼▼▼▼▼▼▼▼▼▼▼▼ 'action'을 'myPlan'으로 수정 ▼▼▼▼▼▼▼▼▼▼▼▼▼
+    if (world && myPlan.interactionTarget) {
+        const targetName = myPlan.interactionTarget;
         const relationship = character.relationships[targetName];
         
         if (relationship) {
@@ -85,9 +97,9 @@ function updateCharacterStats(character, myPlan, world) {
         }
     }
 
-
     // --- 4. 대화 중인 경우 상대방 관계 효과 ---
-    if (world && character.conversationId && !action.interactionTarget) {
+    // ▼▼▼▼▼▼▼▼▼▼▼▼▼ 'action'을 'myPlan'으로 수정 ▼▼▼▼▼▼▼▼▼▼▼▼▼
+    if (world && character.conversationId && !myPlan.interactionTarget) {
         const conversation = world.activeConversations.find(conv => conv.id === character.conversationId);
         if (conversation) {
             const otherParticipants = conversation.participants.filter(pId => pId !== character.id);
@@ -131,20 +143,20 @@ function updateCharacterStats(character, myPlan, world) {
         character.stress = Math.min(100, character.stress + 3);
     }
 
-    if (Math.abs(energyChange) > 0.1 || Math.abs(stressChange) > 0.1) {
+    if (Math.abs(energyChange) > 0.1 || Math.abs(stressChange) > 0.1 || Math.abs(socialNeedChange) > 0.1) {
         console.log(`[스탯 변화] ${character.name}: 에너지(${energyChange.toFixed(1)}) 스트레스(${stressChange.toFixed(1)}) 사회욕구(${socialNeedChange.toFixed(1)})`);
     }
-    if (Math.abs(energyChange) > 0.1 || Math.abs(stressChange) > 0.1) {
-    console.log(`[스탯 변화] ${character.name}: 에너지(${energyChange.toFixed(1)}) 스트레스(${stressChange.toFixed(1)}) 사회욕구(${socialNeedChange.toFixed(1)})`);
     
-    // 큰 변화가 있었다면 상태 업데이트 트리거
+    // 이 부분은 중복되어 있어 하나를 삭제했습니다.
     const shouldUpdateState = Math.abs(energyChange) > 5 || Math.abs(stressChange) > 5 || 
                                 character.energy < 20 || character.stress > 80;
         
-        if (shouldUpdateState) {
-            character.needsStateUpdate = true;
-        }
+    if (shouldUpdateState) {
+        character.needsStateUpdate = true;
     }
 }
 
-module.exports = { updateCharacterStats };
+module.exports = { 
+    updateCharacterStats,
+    updateAllCharacterStats 
+};
