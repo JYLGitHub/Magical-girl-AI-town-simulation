@@ -60,6 +60,8 @@ async function handleStartConversation(action, world) {
     const nextSpeakerId = participantIds.find(id => id !== initiator.id) || initiator.id;
     addMessageToConversation(newConv, initiator.id, action.content, nextSpeakerId);
     
+    initiator.currentAction = `(대화) ${action.content}`;
+
     const truncatedContent = truncateText(action.content);
     const targetNames = action.target.join(', ');
     
@@ -91,6 +93,9 @@ async function handleContinueConversation(action, world) {
     }
     
     addMessageToConversation(conv, character.id, action.content, nextSpeakerId);
+
+    character.currentAction = `(대화) ${action.content}`;
+
     const truncatedContent = truncateText(action.content);
     
     return {
@@ -110,6 +115,8 @@ async function handleLeaveConversation(action, world) {
     if (!conv) {
         return { success: false, reason: 'Not in conversation' };
     }
+
+    character.currentAction = action.content || '대화를 떠났습니다.';
 
     character.conversationId = null;
     conv.participants = conv.participants.filter(pId => pId !== character.id);
@@ -141,6 +148,8 @@ function handleListen(action, world) {
     const { characterDatabase } = world;
     let description = action.content;
     
+    character.currentAction = description;
+
     // charX를 실제 이름으로 변환만 하면 됨
     description = description.replace(/char(\d+)/g, (match, num) => {
         const charId = `char${num}`;
