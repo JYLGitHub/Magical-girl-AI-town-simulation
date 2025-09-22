@@ -1,63 +1,224 @@
 const locations = {
     // 개인 주거지
-    "강이현의 집": {
-        description: "고급 주택가에 있지만 집안 곳곳에 딱지가 붙어있다. 이현의 방은 기본적인 가구들 뿐이며 정리할 자리가 없어 옷이나 물건들이 곳곳에 널려있다.",
+    "조루디의 반지하 원룸": {
+        description: "깔끔하고 체계적으로 정리된 반지하 원룸. 책장이 주제별로 정리되어 있고, 작업 데스크가 중심. 최소한의 가구지만 각각이 다기능적이며, 따뜻한 조명과 작은 식물 몇 개로 아늑함을 연출한다.",
         capacity: 3,
         type: "residential"
     },
-    "죠르디의 집": {
-        description: "밝고 깔끔한 고등학생의 방. 책상 위에 교재들과 귀여운 소품들이 정리되어 있다. 엄마, 여동생과 함께 산다.",
+    "민도저의 투룸 오피스텔": {
+        description: "실용적이면서도 활동적인 느낌의 투룸 오피스텔. 운동용품이 한쪽 구석에 정리되어 있고, 벽에는 목표와 계획이 적힌 화이트보드. 깔끔하지만 살짝 바쁜 사람의 흔적이 보이며, 공용 공간은 언제든 사람을 초대할 수 있게 정돈되어 있다.",
         capacity: 3,
         type: "residential"
     },
-    "home": {
-        description: "깔끔하고 효율적으로 정리된 성인 남성의 집. 최소한의 가구로 실용성을 추구한다. 혼자 산다.",
+    "구선달의 원룸": {
+        description: "예술적 감각이 돋보이는 원룸. 빈티지 소품과 작품들이 조화롭게 배치되어 있고, 작업 공간과 휴식 공간이 미묘하게 분리되어 있다. 조명에 특히 신경 써서 분위기가 수시로 바뀔 수 있게 설계했으며, 혼자만의 시간을 위한 아늑한 코너가 있다.",
         capacity: 3, 
         type: "residential"
     },
-    "home": {
-        description: "카페 위층에 위치한 아늑한 원룸. 커피 향이 은은하게 퍼진다.",
-        capacity: 3,
-        type: "residential" 
-    },
     
     // 공용 장소
-    "카페": {
-        description: "이수영이 운영하는 따뜻한 분위기의 카페",
-        capacity: 6,
-        type: "commercial"
+    "university": {
+        description: "죠르디, 미니도저, 구선달이 다니는 종합대학교",
+        capacity: 20,
+        type: "educational"
     },
-    "식당": {
-        description: "동네 맛집으로 유명한 가족 식당",
+    "library": {
+        description: "대학교 중앙도서관, 조용하고 학술적인 분위기",
+        capacity: 12,
+        type: "educational"
+    },
+    "school": {
+        description: "종합대학교 가까이에 있는 고등학교",
+        capacity: 20,
+        type: "educational"
+    },
+    "cafe": {
+        description: "대학가 근처 아늑한 분위기의 카페, 학생들이 자주 찾는 곳",
         capacity: 8,
         type: "commercial"
     },
-    "회사": {
-        description: "현대적인 오피스 빌딩",
-        capacity: 10,
-        type: "workplace"
-    },
-    "학교": {
-        description: "강이현과 죠르디가 다니는 고등학교",
-        capacity: 15,
+    "student_council": {
+        description: "대학교 학생회실, 미니도저의 주요 활동 공간",
+        capacity: 6,
         type: "educational"
+    },
+    "gym": {
+        description: "격투기와 헬스가 가능한 종합 체육시설",
+        capacity: 10,
+        type: "commercial"
+    },
+    "art_studio": {
+        description: "미술대학 작업실, 개인 창작 공간",
+        capacity: 4,
+        type: "educational"
+    },
+    "gallery": {
+        description: "현대미술 전시가 열리는 소규모 갤러리",
+        capacity: 6,
+        type: "cultural"
+    },
+    "restaurant": {
+        description: "대학가 근처 인기 있는 가족 경영 식당",
+        capacity: 8,
+        type: "commercial"
+    },
+    "park": {
+        description: "대학 근처 조용한 도시공원, 산책과 휴식 공간",
+        capacity: 15,
+        type: "public"
+    },
+    "vintage_shop": {
+        description: "독특한 빈티지 소품과 의류를 파는 작은 상점",
+        capacity: 4,
+        type: "commercial"
     }
 };
 const scenarios = {
     modern: {
         worldName: "현대 도시",
-        locations: ["집", "학교", "회사", "카페", "도서관", "식당", "공원", "작업실", "상점"],
+        locations: ["home", "school", "university", "library", "cafe", "student_council", "gym", "art_studio", "gallery", "restaurant", "park", "vintage_shop"],
         archetypes: {
             student: {
                 schedule: {
-                    weekday: {
-                        6: { location: 'home', status: '기상 및 아침 준비' },
-                        9: { location: '학교', status: '오전 수업' },
-                        12: { location: '식당', status: '점심 식사' },
-                        14: { location: '학교', status: '오후 수업' },
-                        18: { location: 'home', status: '저녁 식사' },
-                        19: { location: 'home', status: '자유 시간' },
-                        23: { location: 'home', status: '취침' }
+                    "조루디": {
+                        monday: {
+                        9: { location: "library", status: "도서관 연구" },
+                        13: { location: "university", status: "대학원 세미나" },
+                        16: { location: "home", status: "프리랜서 리서치 작업" },
+                        19: { location: "home", status: "저녁 식사" },
+                        22: { location: "home", status: "개인 연구 및 논문 작성" }
+                        },
+                        tuesday: {
+                        10: { location: "university", status: "지도교수 미팅" },
+                        14: { location: "home", status: "프리랜서 프로젝트" },
+                        18: { location: "home", status: "저녁 식사" },
+                        20: { location: "home", status: "자유 시간" },
+                        23: { location: "home", status: "독서 및 연구" }
+                        },
+                        wednesday: {
+                        9: { location: "university", status: "대학원 수업" },
+                        13: { location: "cafe", status: "점심 및 휴식" },
+                        15: { location: "library", status: "도서관 작업" },
+                        19: { location: "home", status: "저녁 식사" },
+                        22: { location: "home", status: "집중 연구 시간" }
+                        },
+                        thursday: {
+                        10: { location: "cafe", status: "프리랜서 클라이언트 미팅" },
+                        14: { location: "library", status: "연구 작업" },
+                        18: { location: "home", status: "저녁 식사" },
+                        21: { location: "home", status: "논문 작성" }
+                        },
+                        friday: {
+                        9: { location: "university", status: "대학원 세미나" },
+                        13: { location: "home", status: "프로젝트 마무리" },
+                        16: { location: "cafe", status: "자유 시간" },
+                        19: { location: "home", status: "저녁 식사" }
+                        },
+                        saturday: {
+                        10: { location: "home", status: "집 정리 및 휴식" },
+                        13: { location: "home", status: "자유 시간" },
+                        17: { location: "home", status: "요리 및 저녁" },
+                        20: { location: "home", status: "여유로운 독서" }
+                        },
+                        sunday: {
+                        9: { location: "park", status: "산책 및 명상" },
+                        12: { location: "home", status: "자유 시간" },
+                        16: { location: "home", status: "다음 주 계획 세우기" },
+                        19: { location: "home", status: "휴식" }
+                        }
+                    },
+                    "민도저": {
+                        monday: {
+                        9: { location: "university", status: "대학교 수업" },
+                        13: { location: "university", status: "점심" },
+                        14: { location: "student_council", status: "학생회 업무" },
+                        18: { location: "gym", status: "복싱 수업" },
+                        21: { location: "home", status: "과제 및 자유 시간" }
+                        },
+                        tuesday: {
+                        10: { location: "university", status: "대학교 수업" },
+                        14: { location: "student_council", status: "학생회 회의" },
+                        17: { location: "university", status: "동아리 활동" },
+                        20: { location: "home", status: "저녁 식사" },
+                        23: { location: "home", status: "과제" }
+                        },
+                        wednesday: {
+                        9: { location: "university", status: "대학교 수업" },
+                        13: { location: "student_council", status: "학생회 프로젝트" },
+                        16: { location: "cafe", status: "자유 시간" },
+                        19: { location: "gym", status: "킥복싱 수업" },
+                        22: { location: "home", status: "개인 시간" }
+                        },
+                        thursday: {
+                        10: { location: "university", status: "대학교 수업" },
+                        14: { location: "student_council", status: "학생회 업무" },
+                        18: { location: "restaurant", status: "친구들과 저녁" },
+                        21: { location: "home", status: "과제 및 자유 시간" }
+                        ,
+                        friday: {
+                        9: { location: "university", status: "대학교 수업" },
+                        13: { location: "student_council", status: "학생회 마무리 업무" },
+                        16: { location: "home", status: "자유 시간" },
+                        19: { location: "restaurant", status: "친구들과 시간" }
+                        },
+                        saturday: {
+                        10: { location: "gym", status: "운동 (헬스장)" },
+                        13: { location: "home", status: "자유 시간" },
+                        17: { location: "home", status: "요리 및 정리" },
+                        21: { location: "home", status: "개인 시간" }
+                        },
+                        sunday: {
+                        9: { location: "gym", status: "운동" },
+                        12: { location: "home", status: "휴식 및 자유 시간" },
+                        16: { location: "student_council", status: "다음 주 학생회 준비" },
+                        19: { location: "home", status: "휴식" }
+                        }
+                    },
+                    },
+                    "구선달": {
+                        monday: {
+                        10: { location: "university", status: "미술대학 수업" },
+                        14: { location: "art_studio", status: "작업실에서 개인 작업" },
+                        17: { location: "cafe", status: "자유 시간" },
+                        20: { location: "home", status: "콘텐츠 제작" }
+                        },
+                        tuesday: {
+                        9: { location: "university", status: "미술대학 수업" },
+                        13: { location: "cafe", status: "점심 및 휴식" },
+                        15: { location: "art_studio", status: "개인 작업" },
+                        19: { location: "gallery", status: "갤러리 탐방" },
+                        22: { location: "home", status: "개인 시간" }
+                        },
+                        wednesday: {
+                        10: { location: "university", status: "미술대학 수업" },
+                        14: { location: "art_studio", status: "졸업 작품 준비" },
+                        18: { location: "cafe", status: "자유 시간" },
+                        21: { location: "home", status: "콘텐츠 제작" }
+                        ,
+                        thursday: {
+                        9: { location: "university", status: "미술대학 수업" },
+                        13: { location: "art_studio", status: "작업실 작업" },
+                        17: { location: "cafe", status: "카페에서 휴식" },
+                        20: { location: "home", status: "개인 시간" }
+                        },
+                        friday: {
+                        10: { location: "university", status: "미술대학 수업" },
+                        14: { location: "university", status: "교수님 미팅" },
+                        17: { location: "home", status: "자유 시간" },
+                        21: { location: "restaurant", status: "친구들과 시간" }
+                        },
+                        saturday: {
+                        11: { location: "home", status: "개인 작업 (집중 시간)" },
+                        15: { location: "vintage_shop", status: "빈티지 소품 쇼핑" },
+                        18: { location: "home", status: "자유 시간" },
+                        21: { location: "home", status: "독서 및 영화 감상" }
+                        },
+                        sunday: {
+                        10: { location: "park", status: "명상 및 산책" },
+                        13: { location: "home", status: "완전한 혼자 시간" },
+                        17: { location: "art_studio", status: "작업실 정리" },
+                        20: { location: "home", status: "다음 주 계획" }
+                        }
                     },
                     weekend: {
                         9: { location: 'home', status: '늦잠' },
@@ -67,6 +228,74 @@ const scenarios = {
                         20: { location: 'home', status: '자유 시간' },
                         23: { location: 'home', status: '취침' }
                     }
+                    }
+                }
+            },
+            academic: {
+                schedule: {
+                        monday: {
+                            6: { location: 'home', status: '기상 및 아침 준비' },
+                            9: { location: 'school', status: '오전 수업' },
+                            12: { location: 'school', status: '점심 식사' },
+                            14: { location: 'school', status: '오후 수업' },
+                            18: { location: 'home', status: '저녁 식사' },
+                            19: { location: 'home', status: '자유 시간' },
+                            23: { location: 'home', status: '취침' }
+                        },
+                        tuesday: {
+                            6: { location: 'home', status: '기상 및 아침 준비' },
+                            9: { location: 'school', status: '오전 수업' },
+                            12: { location: 'school', status: '점심 식사' },
+                            14: { location: 'school', status: '오후 수업' },
+                            18: { location: 'home', status: '저녁 식사' },
+                            19: { location: 'home', status: '숙제 및 공부' },
+                            23: { location: 'home', status: '취침' }
+                        },
+                        wednesday: {
+                            6: { location: 'home', status: '기상 및 아침 준비' },
+                            9: { location: 'school', status: '오전 수업' },
+                            12: { location: 'school', status: '점심 식사' },
+                            14: { location: 'school', status: '오후 수업' },
+                            18: { location: 'home', status: '저녁 식사' },
+                            19: { location: 'home', status: '자유 시간' },
+                            23: { location: 'home', status: '취침' }
+                        },
+                        thursday: {
+                            6: { location: 'home', status: '기상 및 아침 준비' },
+                            9: { location: 'school', status: '오전 수업' },
+                            12: { location: 'school', status: '점심 식사' },
+                            14: { location: 'school', status: '오후 수업' },
+                            18: { location: 'home', status: '저녁 식사' },
+                            19: { location: 'home', status: '숙제 및 공부' },
+                            23: { location: 'home', status: '취침' }
+                        },
+                        friday: {
+                            6: { location: 'home', status: '기상 및 아침 준비' },
+                            9: { location: 'school', status: '오전 수업' },
+                            12: { location: 'school', status: '점심 식사' },
+                            14: { location: 'school', status: '오후 수업' },
+                            18: { location: 'home', status: '저녁 식사' },
+                            19: { location: 'home', status: '자유 시간' },
+                            23: { location: 'home', status: '취침' }
+                        },
+                        saturday: {
+                            9: { location: 'home', status: '늦잠' },
+                            11: { location: 'home', status: '자유 시간' },
+                            13: { location: 'home', status: '점심 식사' },
+                            15: { location: 'home', status: '자유 시간' },
+                            18: { location: 'home', status: '저녁 식사' },
+                            20: { location: 'home', status: '자유 시간' },
+                            23: { location: 'home', status: '취침' }
+                        },
+                        sunday: {
+                            9: { location: 'home', status: '늦잠' },
+                            11: { location: 'home', status: '자유 시간' },
+                            13: { location: 'home', status: '점심 식사' },
+                            15: { location: 'home', status: '자유 시간' },
+                            18: { location: 'home', status: '저녁 식사' },
+                            20: { location: 'home', status: '자유 시간' },
+                            23: { location: 'home', status: '취침' }
+                        }
                 }
             },
             officeWorker: {

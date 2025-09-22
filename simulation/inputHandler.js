@@ -92,13 +92,16 @@ async function processActions(actions, world) {
                     nextSpeakerId = conv.participants.find(pId => pId !== character.id) || character.id;
                 }
                 addMessageToConversation(conv, character.id, action.content, nextSpeakerId);
-                const truncatedContent = truncateText(action.content);
+                // const truncatedContent = truncateText(action.content);
                 description = `대화 중: "${action.content}"`;
+                console.log(`[DEBUG] ${character.name} continueConversation - description: "${description}"`);
 
             } else if (action.actionName === 'leaveConversation') {
                 description = `${action.content || '대화를 떠났습니다.'}`;
                 character.conversationId = null;
                 conv.participants = conv.participants.filter(pId => pId !== character.id);
+                console.log(`[DEBUG] ${character.name} leaveConversation - description: "${description}"`);
+
                 if (conv.participants.length >= 2) {
                     conv.turnHolder = conv.participants.find(pId => pId !== character.id);
                     addMessageToConversation(conv, character.id, '(대화를 떠났습니다)', conv.turnHolder);
@@ -112,6 +115,10 @@ async function processActions(actions, world) {
                         }
                     });
                 }
+
+            } else if (action.actionName === 'listen') { // ⭐ 여기로 이동
+                description = action.content || '대화를 듣고 있습니다.';
+                console.log(`[DEBUG] ${character.name} listen - description: "${description}"`);
             }
         } else {
             if (action.actionName === 'script') {
@@ -129,17 +136,38 @@ async function processActions(actions, world) {
                     description += ` (${action.targetLocation}으로 이동)`;
                 }
             } else {
-                description = action.content;
+                // AI 행동 처리
+                character.currentAction = action.content || '(AI 행동)';
+                character.actionType = 'ai';
+                
+                description = action.content || action.thoughts || '(AI 활동 중)'; // ⭐ 확실히 값 보장
+                
                 if (action.targetLocation) {
                     character.location = action.targetLocation;
                     description += ` (${action.targetLocation}으로 이동)`;
                 }
-            }
+            }    
+            // } else {
+            //     // ⭐ AI 행동도 currentAction에 저장
+            //     character.currentAction = action.content || description;
+            //     character.actionType = 'ai';  // ⭐ AI 행동임을 표시
+                
+            //     description = action.content;
+            //     if (action.targetLocation) {
+            //         character.location = action.targetLocation;
+            //         description += ` (${action.targetLocation}으로 이동)`;
+            //     }
+            // }
         }
         
         if (description) {
             actionLogs.push({ charId: character.id, description });
+            console.log(`[DEBUG] ${character.name} actionLog 추가됨: "${description}"`);
+
+        } else {
+            console.log(`[DEBUG] ${character.name} description이 비어있어서 actionLog 추가 안됨`);
         }
+
     }
     
     // --- 4. 종료된 대화 처리 (engine.js에서 이동해 온 로직) ---

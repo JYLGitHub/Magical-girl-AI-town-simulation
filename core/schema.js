@@ -24,21 +24,23 @@ function createCharacter(initialData) {
         thoughts: '...',
         conversationId: null,
 
-        // 스탯 정보
+        // 스탯 정보 - AI가 직접 정의
         mood: '평온',
+        statusDescription: '특별한 감정 없이 평범한 상태',
         energy: 100,
         stress: 10,
         socialNeed: 50,
         
+        // 확장된 관계 정보
+        relationships: {},
+
         // 장기 정보
         journal: [],
-        relationships: {},
         shortTermGoal: null,
         dailyPlan: [], // ⭐ AI가 생성한 하루 계획(문장)을 저장할 공간
         currentPlan: null,        // 현재 실행 중인 계획
         planEndTime: null,        // 계획 종료 시간
         lastPlanTime: 0,          // 마지막으로 계획을 세운 시간
-
     };
 }
 
@@ -50,6 +52,7 @@ function createCharacter(initialData) {
  * @param {string} initialMessage - 첫 번째 대화 내용
  * @returns {object} - 완전한 대화 객체
  */
+
 function createConversation(convId, initiatorId, targetId, initialMessage) {
     return {
         id: convId,
@@ -59,8 +62,44 @@ function createConversation(convId, initiatorId, targetId, initialMessage) {
     };
 }
 
+function createRelationship(characterAName, characterBName) {
+    return {
+        // 기본 수치 (0-100)
+        affection: 50,          
+        trust: 50,              
+        respect: 50,            
+        familiarity: 10,        
+        dependency: 0,          
+        rivalry: 0,             
+        
+        // AI가 직접 정의하는 관계 설명
+        relationshipType: "처음 만난 사람",
+        relationshipSummary: "아직 서로에 대해 잘 모르는 상태",
+        
+        // 감정적 영향 (-10 ~ +10)
+        energyModifier: 0,      
+        stressModifier: 0,      
+        moodInfluence: "중립",   
+        
+        // 상호작용 기록
+        interactionCount: 0,
+        lastInteraction: null,
+        conversationCount: 0,
+        sharedExperiences: [],
+        
+        // 시간 정보
+        firstMet: null,
+        relationshipDuration: 0,
+        
+        // 특별한 이벤트들
+        significantEvents: [],   
+        conflicts: [],           
+        positiveMemories: [],    
+    };
+}
 
 module.exports = {
     createCharacter,
     createConversation,
+    createRelationship,
 };

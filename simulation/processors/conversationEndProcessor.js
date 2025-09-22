@@ -70,35 +70,71 @@ async function processEndedConversation(conversation, world) {
         }
     }
     
-    // 3. 관계 업데이트
+    // 3. 관계 업데이트 - 새로운 AI 기반 시스템 사용
     const ids = conversation.participantHistory || [];
     for (let i = 0; i < ids.length; i++) {
         for (let j = i + 1; j < ids.length; j++) {
-            const a = world.characterDatabase[ids[i]];
-            const b = world.characterDatabase[ids[j]];
-            if (!a || !b) continue;
+            const charA = world.characterDatabase[ids[i]];
+            const charB = world.characterDatabase[ids[j]];
+            if (!charA || !charB) continue;
 
-            const deltaAB = await updateRelationshipFromConversation(
-                a, b, conversation, world.characterDatabase, provider
-            );
-            const deltaBA = await updateRelationshipFromConversation(
-                b, a, conversation, world.characterDatabase, provider
+            // A의 관점에서 B에 대한 관계 분석
+            console.log(`[관계 분석 시작] ${charA.name} → ${charB.name}`);
+            const analysisAB = await updateRelationshipFromConversation(
+                charA, charB, conversation, world.characterDatabase, provider
             );
 
-            if (deltaAB) {
-                a.relationships[b.name] = a.relationships[b.name] || { affection: 50, trust: 50 };
-                a.relationships[b.name].affection += deltaAB.affectionChange;
-                a.relationships[b.name].trust += deltaAB.trustChange;
-                console.log(`- 관계 변화 ${a.name}→${b.name}: ❤️ ${deltaAB.affectionChange}, 🤝 ${deltaAB.trustChange}`);
+            // B의 관점에서 A에 대한 관계 분석  
+            console.log(`[관계 분석 시작] ${charB.name} → ${charA.name}`);
+            const analysisBA = await updateRelationshipFromConversation(
+                charB, charA, conversation, world.characterDatabase, provider
+            );
+
+            if (analysisAB) {
+                console.log(`[관계 업데이트] ${charA.name} → ${charB.name}:`);
+                console.log(`  새로운 관계: "${analysisAB.relationshipType}"`);
+                console.log(`  감정 변화: 호감(${analysisAB.affectionChange}) 신뢰(${analysisAB.trustChange}) 존경(${analysisAB.respectChange})`);
+                console.log(`  상호작용 효과: 에너지(${analysisAB.energyModifier}) 스트레스(${analysisAB.stressModifier})`);
+                
+                // 특별한 관계 변화가 있었다면 로그 기록
+                if (Math.abs(analysisAB.affectionChange) > 10 || Math.abs(analysisAB.trustChange) > 10) {
+                    console.log(`  🔥 [주목할 만한 관계 변화] ${charA.name}의 ${charB.name}에 대한 감정이 크게 변했습니다!`);
+                }
             }
             
-            if (deltaBA) {
-                b.relationships[a.name] = b.relationships[a.name] || { affection: 50, trust: 50 };
-                b.relationships[a.name].affection += deltaBA.affectionChange;
-                b.relationships[a.name].trust += deltaBA.trustChange;
-                console.log(`- 관계 변화 ${b.name}→${a.name}: ❤️ ${deltaBA.affectionChange}, 🤝 ${deltaBA.trustChange}`);
+            if (analysisBA) {
+                console.log(`[관계 업데이트] ${charB.name} → ${charA.name}:`);
+                console.log(`  새로운 관계: "${analysisBA.relationshipType}"`);
+                console.log(`  감정 변화: 호감(${analysisBA.affectionChange}) 신뢰(${analysisBA.trustChange}) 존경(${analysisBA.respectChange})`);
+                console.log(`  상호작용 효과: 에너지(${analysisBA.energyModifier}) 스트레스(${analysisBA.stressModifier})`);
+                
+                if (Math.abs(analysisBA.affectionChange) > 10 || Math.abs(analysisBA.trustChange) > 10) {
+                    console.log(`  🔥 [주목할 만한 관계 변화] ${charB.name}의 ${charA.name}에 대한 감정이 크게 변했습니다!`);
+                }
+            }
+            
+            // 관계 호환성 분석 (옵션)
+            if (analysisAB && analysisBA) {
+                const compatibilityAnalysis = require('../relationships.js').analyzeRelationshipCompatibility(
+                    charA.relationships[charB.name],
+                    charB.relationships[charA.name]
+                );
+                
+                if (compatibilityAnalysis) {
+                    console.log(`[관계 호환성] ${charA.name} ↔ ${charB.name}: ${compatibilityAnalysis.compatibility} (${compatibilityAnalysis.pattern})`);
+                }
             }
         }
+    }
+    
+    // 4. 관계 기록 정리 (메모리 절약)
+    for (const participantId of conversation.participantHistory) {
+        const character = world.characterDatabase[participantId];
+        if (!character) continue;
+        
+        Object.values(character.relationships).forEach(relationship => {
+            require('../relationships.js').cleanupRelationshipHistory(relationship);
+        });
     }
 }
 

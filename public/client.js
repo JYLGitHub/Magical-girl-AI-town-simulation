@@ -184,25 +184,25 @@ function updateAllUI() {
 // [5] UI 렌더링 및 유틸리티
 // =======================================================================
 
-function getCharacterAction(character) {
-    // 1. currentAction이 있으면 사용
-    if (character.currentAction && character.currentAction !== "대기 중...") {
-        return character.currentAction;
-    }
+// function getCharacterAction(character) {
+//     // 1. currentAction이 있으면 사용
+//     if (character.currentAction && character.currentAction !== "대기 중...") {
+//         return character.currentAction;
+//     }
     
-    // 2. 대화 중이면 대화 표시
-    if (character.conversationId) {
-        return "대화 중";
-    }
+//     // 2. 대화 중이면 대화 표시
+//     if (character.conversationId) {
+//         return "대화 중";
+//     }
     
-    // 3. thoughts가 있으면 사용
-    if (character.thoughts && character.thoughts !== "...") {
-        return character.thoughts;
-    }
+//     // 3. thoughts가 있으면 사용
+//     if (character.thoughts && character.thoughts !== "...") {
+//         return character.thoughts;
+//     }
     
-    // 4. 기본값
-    return "대기 중...";
-}
+//     // 4. 기본값
+//     return "대기 중...";
+// }
 
 function updateTimeDisplay() {
     if (!gameState.situation) return;
@@ -271,8 +271,8 @@ function createCharacterCard(character) {
             </div>
             ${relationshipSummary}
             <div class="current-action-summary">
-                ${getCharacterAction(character)}
-                <span class="action-type ${character.actionType}">${actionTypeText}</span>
+            ${character.currentAction || "..."}
+            <span class="action-type ${character.actionType}">${actionTypeText}</span>
             </div>
         </div>
         <div class="character-details">
