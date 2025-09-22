@@ -183,7 +183,7 @@ async function generateConversationResponse(character, world) {
         .join('\n');
 
     const timeContext = `현재 시간: Day ${situation.day}, ${situation.currentHour}:${situation.currentMinute.toString().padStart(2, '0')}`;
-    const nearbyContext = `주변 인물: ${nearbyCharacters.map(c => c.name).join(', ') || '없음'}`;
+    // const nearbyContext = `주변 인물: ${nearbyCharacters.map(c => c.name).join(', ') || '없음'}`;
     const allCharactersContext = `[월드에 있는 모든 캐릭터 목록]\n` + Object.values(characterDatabase).map(c => `- ${c.name} (현재 위치: ${c.location})`).join('\n');
     const locationNames = Object.keys(locations).join(', ');
 
@@ -207,7 +207,6 @@ async function generateConversationResponse(character, world) {
 
     [현재 상황]
     ${timeContext} (24시간제)
-    ${nearbyContext}
     ${allCharactersContext}
 
     [선택 가능한 장소 목록]
@@ -266,7 +265,7 @@ async function generateFreeAction(character, world) {
         : '[현재 특별히 떠오르는 기억이 없습니다.]';
     
     const timeContext = `현재 시간: Day ${situation.day}, ${situation.currentHour}:${situation.currentMinute.toString().padStart(2, '0')}`;
-    const nearbyContext = `주변 인물: ${nearbyCharacters.map(c => c.name).join(', ') || '없음'}`;
+    // const nearbyContext = `주변 인물: ${nearbyCharacters.map(c => c.name).join(', ') || '없음'}`;
     const allCharactersContext = `[월드에 있는 모든 캐릭터 목록]\n` + Object.values(characterDatabase).map(c => `- ${c.name} (현재 위치: ${c.location})`).join('\n');
     const locationNames = Object.keys(locations).join(', ');
 
@@ -284,10 +283,27 @@ async function generateFreeAction(character, world) {
         alertContext = `[알림] ${character.newMessageAlert}`;
     }
 
+    // 다음 스케줄 정보 가져오기
+    let nextScheduleInfo = '';
+    try {
+        const nextHour = world.situation.currentHour + 1;
+        const nextSchedule = applySchedule(character, {
+            ...world.situation,
+            currentHour: nextHour >= 24 ? 0 : nextHour,
+            day: nextHour >= 24 ? world.situation.day + 1 : world.situation.day
+        });
+        
+        if (nextSchedule) {
+            nextScheduleInfo = `다음 스케줄: ${nextHour >= 24 ? '내일 0' : nextHour}시에 ${nextSchedule.location}에서 ${nextSchedule.status}`;
+        } else {
+            nextScheduleInfo = '다음 스케줄: 특별한 일정 없음';
+        }
+    } catch (error) {
+        nextScheduleInfo = '다음 스케줄: 확인 불가';
+    }
+
     // Free action prompt
     const prompt = `당신은 '${character.name}'입니다. 당신의 정체성, 현재 감정 상태, 현재 상황, 그리고 떠오른 기억들을 바탕으로 다음에 무엇을 할지 결정하세요.
-
-    ${alertContext}
 
     [당신의 정체성]
     - 역할: ${character.role}
@@ -300,21 +316,28 @@ async function generateFreeAction(character, world) {
     - 사회적 욕구: ${character.socialNeed} / 100
     - 현재 상태: ${character.status} (위치: ${character.location})
 
-    [주변인 정보]
-    ${participantInfo}
-
-    ${memoryContext}
-
-    [현재 시간과 스케줄]
-    ${timeContext} (24시간제)
-    ${scheduleInfo}
-
     [현재 상황]
-    ${nearbyContext}
+    ${timeContext} (24시간제)
+    ${alertContext}
+
+    [주변 상황]
+    ${participantInfo}
     ${allCharactersContext}
+
+    [스케쥴]
+    ${scheduleInfo}
+    ${nextScheduleInfo}
 
     [선택 가능한 장소 목록]
     ${locationNames}
+
+    [당신의 기억]
+    ${memoryContext}
+
+    [중요! 우선순위 판단]
+    현재 하고 있는 일과 다음 스케줄을 비교해서 판단하세요:
+    - 현재 활동이 더 중요하다면 계속 하세요 (keepCurrentActivity: true)
+    - 다음 스케줄이 더 중요하다면 마무리하고 스케줄을 준비하세요 (keepCurrentActivity: false)
 
     [행동 규칙]
     - 당신의 프로필, 역할과 성격은 당신의 '정체성'이며, 모든 행동의 최우선 기준입니다.
@@ -326,12 +349,15 @@ async function generateFreeAction(character, world) {
 
     [출력 형식 규칙]
     {
-    "thoughts": "당신의 생각의 흐름을 적으세요(2문장 이내).",
+    "thoughts": "현재 상황에 대한 생각(2문장 이내).",
+    "keepCurrentActivity": true/false,
+    "priorityReason": "우선순위 판단 이유",
     "actionName": "startConversation | script | talkToSelf | sendMessage 등...",
-    "content": "첫 대화 내용 또는 행동에 대한 묘사(3문장 이내)",
+    "content": "행동 또는 대사(3문장 이내)",
     "target": ["대상이 있다면 이름"],
-    "targetLocation": "이동할 장소 이름"
+    "targetLocation": "이동할 장소"
     }`;
+
     try {
         const rawResponse = await callLLM(prompt, world.llmConfigs[character.id]?.provider);
         
@@ -373,7 +399,12 @@ async function generateFreeAction(character, world) {
             character.newMessageAlert = null;
         }
 
-        return JSON.parse(jsonStr);
+        // AI 응답에서 keepCurrentActivity 플래그 저장
+        const result = JSON.parse(jsonStr);
+        character.keepCurrentActivity = result.keepCurrentActivity || false;
+        character.priorityReason = result.priorityReason || '';
+
+        return result;
         
     } catch (error) {
         console.error(`[LLM parsing error] ${character.name}: ${error.message}`);
@@ -383,6 +414,9 @@ async function generateFreeAction(character, world) {
         if (character.hasNewMessage) {
             character.hasNewMessage = false;
             character.newMessageAlert = null;
+            // 에러 시 우선순위 플래그도 초기화
+            character.keepCurrentActivity = false;
+            character.priorityReason = '';
         }
         return { 
             thoughts: `Parsing error: ${error.message}`, 
@@ -396,10 +430,17 @@ async function generateFreeAction(character, world) {
 function shouldUseAI(character, world) {
     const scheduleSet = scenarios[activeScenarioName]?.archetypes[character.archetype]?.schedule;
     const schedule = applySchedule(character, world.situation);
+
     if (schedule && (schedule.status.includes('수면') || schedule.status.includes('취침'))) {
         return false;
     }
     
+    // **새로 추가: AI가 현재 활동을 유지하기로 결정했다면 AI 모드 유지**
+    if (character.keepCurrentActivity === true) {
+        console.log(`[AI 지속] ${character.name} - 현재 활동 우선으로 AI 모드 유지`);
+        return true;
+    }
+
     // **If there's an appointment, always use AI**
     const situationContext = { nearbyCharacterNames: [] };
     const relevantMemories = require('./memory.js').retrieveMemories(character, situationContext);
@@ -471,6 +512,10 @@ function applySchedule(character, situation) {
 
 // Helper function to handle basic actions according to schedule
 function processWithScript(character, situation) {
+     // 스크립트 모드로 전환 시 우선순위 플래그 리셋
+    character.keepCurrentActivity = false;
+    character.priorityReason = '';
+
     const schedule = applySchedule(character, situation);
     if (!schedule) {
         const idleActions = [
@@ -486,15 +531,6 @@ function processWithScript(character, situation) {
             status: idleAction.status,
             content: idleAction.action,
             thoughts: "(특별한 계획 없이 시간을 보내는 중)",
-        };
-    }
-    // 현재 위치가 스케줄과 다르다면 점진적 이동
-    if (character.location !== schedule.location) {
-        return {
-            location: character.location, // 현재 위치 유지
-            status: `${schedule.status} 예정이지만 ${character.location}에 머물고 있음`,
-            content: `${character.location}에서 ${schedule.status}을(를) 하려고 합니다.`,
-            thoughts: "(스케줄과 위치가 달라 조정 중)",
         };
     }
     return {

@@ -355,6 +355,7 @@ function generateLLMConfigUI() {
             <select id="${character.id}LLM">
                 <option value="gemini" selected>Gemini</option>
                 <option value="gpt">GPT</option>
+                <option value="claude">Claude</option>
             </select>`;
         container.appendChild(selectWrapper);
     });
@@ -400,9 +401,9 @@ function createRelationshipSection(character) {
 
     Object.entries(character.relationships).forEach(([name, rel]) => {
         let relationshipStatus = '';
-        if (rel.affection > 70) relationshipStatus = '💕 매우 친함';
-        else if (rel.affection > 40) relationshipStatus = '😊 친함';
-        else if (rel.affection > 10) relationshipStatus = '🙂 호감';
+        if (rel.affection > 85) relationshipStatus = '💕 매우 친함';
+        else if (rel.affection > 65) relationshipStatus = '😊 친함';
+        else if (rel.affection > 30) relationshipStatus = '🙂 호감';
         else if (rel.affection > -10) relationshipStatus = '😐 보통';
         else relationshipStatus = '😞 불편함';
 
@@ -415,14 +416,15 @@ function createRelationshipSection(character) {
                 <div class="relationship-stats">
                     <small>호감도: ${Math.round(rel.affection)} | 신뢰도: ${Math.round(rel.trust)} | 친밀도: ${Math.round(rel.familiarity)}</small>
                 </div>
-                <div class="relationship-stats">
-                    <small>대화 횟수: ${rel.interactionCount}회</small>
+                <div class="relationship-type">
+                    <small><strong>관계:</strong> ${rel.relationshipType || '정의되지 않음'}</small>
                 </div>
-                ${rel.memories && rel.memories.length > 0 ? 
-                    `<div class="relationship-memories">
-                        <small>최근 기억: ${rel.memories.slice(-2).join(', ')}</small>
-                    </div>` : ''
-                }
+                <div class="relationship-summary">
+                    <small><em>${rel.relationshipSummary || '아직 감정 정리가 안됨'}</em></small>
+                </div>
+                <div class="relationship-stats">
+                    <small>대화 횟수: ${rel.conversationCount || 0}회</small>
+                </div>
             </div>`;
     });
 
