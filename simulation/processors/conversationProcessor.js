@@ -64,12 +64,14 @@ async function handleStartConversation(action, world) {
     
     const truncatedContent = truncateText(action.content);
     const targetNames = action.target.join(', ');
-    
+    initiator.actionType = action.actionType || 'script';
+
     return {
         success: true,
         actionLog: { 
             charId: initiator.id, 
-            description: `${targetNames}과(와) 대화 시작: "${truncatedContent}"` 
+            description: `${targetNames}과(와) 대화 시작: "${truncatedContent}"`,
+            actionType: action.actionType || 'script'
         }
     };
 }
@@ -95,6 +97,7 @@ async function handleContinueConversation(action, world) {
     addMessageToConversation(conv, character.id, action.content, nextSpeakerId);
 
     character.currentAction = `(대화) ${action.content}`;
+    character.actionType = action.actionType || 'script';
     console.log(`[액션 추적] 1. 대화 프로세서: ${character.name}의 currentAction -> "${character.currentAction}"`);
     const truncatedContent = truncateText(action.content);
     
@@ -102,7 +105,8 @@ async function handleContinueConversation(action, world) {
         success: true,
         actionLog: { 
             charId: character.id, 
-            description: `대화 중: "${truncatedContent}"` 
+            description: `대화 중: "${truncatedContent}"`,
+            actionType: action.actionType || 'script'
         }
     };
 }
@@ -134,18 +138,20 @@ async function handleLeaveConversation(action, world) {
             }
         });
     }
-    
+    character.actionType = action.actionType || 'script';
     return {
         success: true,
         actionLog: { 
             charId: character.id, 
-            description: action.content || '대화를 떠났습니다.' 
+            description: action.content || '대화를 떠났습니다.',
+            actionType: action.actionType || 'script'
         }
     };
 }
 
 function handleListen(action, world) {
     const { characterDatabase } = world;
+    const character = characterDatabase[action.charId]
     let description = action.content;
     
     character.currentAction = description;
@@ -156,11 +162,15 @@ function handleListen(action, world) {
         return characterDatabase[charId]?.name || match;
     });
     
+    character.currentAction = description;
+    character.actionType = action.actionType || 'script';
+    
     return {
         success: true,
         actionLog: { 
             charId: action.charId, 
-            description: description
+            description: description,
+            actionType: action.actionType || 'script'
         }
     };
 }

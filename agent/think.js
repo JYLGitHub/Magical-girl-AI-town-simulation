@@ -221,9 +221,9 @@ async function generateConversationResponse(character, world, currentConversatio
     당신의 프로필, 역할과 성격은 당신의 '정체성'이며, 모든 행동의 최우선 기준입니다.
     **당신의 정체성과 상대방의 프로필, 상대방과의 관계, 그리고 대화의 흐름을 고려하여 다음 할 말을 결정하세요.**
     - 당신의 현재 기분과 상태를 행동과 대화에 자연스럽게 드러내세요. 예를 들어, 에너지가 낮다면 "(피곤한 목소리로) 안녕..."과 같이 말할 수 있습니다.
-    - 대화는 영원히 지속될 수 없습니다. 할 말이 떨어졌거나, 다른 할 일이 생각났거나, 대화가 충분히 길어졌다고 판단되면 "leaveConversation" 액션을 사용해 자연스럽게 대화를 마무리하세요.
-    - 대화를 끝내고 싶거나, 작별 인사를 했다면 반드시 'leaveConversation' 액션을 사용해야 합니다.
-    - 대화는 핑퐁이 되어야 합니다. 대사가 너무 길어지면 상대방이 지루해 할 수 있습니다.
+    - 당신이 좋아하는 화제로 대화를 한다면 당신은 대화가 즐거울 것입니다. 당신이 관심 없는 대화가 지속되면 당신은 지루해질 수 있습니다.
+    - 대화는 영원히 지속될 수 없습니다. 대화가 5-6회 주고받았거나, 시간이 늦거나(22시 이후), 할 말이 떨어졌다고 판단되면 반드시 "leaveConversation" 액션을 사용해 자연스럽게 대화를 마무리하세요.
+    - 현재 시간이 22시 이후라면 대화를 종료하고 집으로 돌아가는 것을 고려하세요.
 
     [출력 형식]
     - 대화를 계속 이어갈 경우:
@@ -234,10 +234,20 @@ async function generateConversationResponse(character, world, currentConversatio
     try {
         const rawResponse = await callLLM(prompt, provider);
         const jsonMatch = rawResponse.match(/\{[\s\S]*\}/);
-        if (jsonMatch) return JSON.parse(jsonMatch[0]);
-        return { thoughts: "AI 응답(대화)에서 JSON을 찾지 못함", actionName: "talkToSelf", content: "(JSON 파싱 오류)" };
+        if (jsonMatch) {
+            const result = JSON.parse(jsonMatch[0]);
+            result.actionType = 'ai'; // 이 줄 추가
+            return result;
+        }
+        return { thoughts: "AI 응답(대화)에서 JSON을 찾지 못함", actionName: "talkToSelf", content: "(JSON 파싱 오류)", actionType: 'ai' };
     } catch (error) {
-        return { thoughts: "AI 호출(대화) 중 오류 발생: " + error.message, actionName: "talkToSelf", content: "(AI 호출 오류)" };
+        console.error(`[대화 LLM 오류] ${character.name}: ${error.message}`);
+        return { 
+            thoughts: "LLM 호출 실패로 대화 종료", 
+            actionName: "leaveConversation", 
+            content: "죄송해요, 갑자기 할 말을 잃었네요. 나중에 다시 이야기해요.",
+            actionType: 'script'
+        };
     }
 }
     
@@ -403,6 +413,7 @@ async function generateFreeAction(character, world) {
 
         // AI 응답에서 keepCurrentActivity 플래그 저장
         const result = JSON.parse(jsonStr);
+        result.actionType = 'ai';
         character.keepCurrentActivity = result.keepCurrentActivity || false;
         character.priorityReason = result.priorityReason || '';
 
@@ -410,7 +421,10 @@ async function generateFreeAction(character, world) {
         
     } catch (error) {
         console.error(`[LLM parsing error] ${character.name}: ${error.message}`);
-        console.error(`[Original response]`, rawResponse);
+        // rawResponse가 정의되지 않은 경우를 대비
+        if (typeof rawResponse !== 'undefined') {
+            console.error(`[Original response]`, rawResponse);
+        }
         
         // 에러 시에도 알림 플래그 제거
         if (character.hasNewMessage) {
@@ -420,10 +434,16 @@ async function generateFreeAction(character, world) {
             character.keepCurrentActivity = false;
             character.priorityReason = '';
         }
+        // LLM 실패 시 스크립트 모드로 대체
+        console.log(`[대체 행동] ${character.name} - LLM 실패로 스크립트 모드로 전환`);
+        const scriptAction = processWithScript(character, world.situation);
         return { 
-            thoughts: `Parsing error: ${error.message}`, 
-            actionName: "talkToSelf", 
-            content: "(AI response processing error)" 
+            actionName: 'script',
+            location: scriptAction.location,
+            status: scriptAction.status,
+            content: scriptAction.content,
+            thoughts: `(LLM 호출 실패로 기본 행동 실행: ${error.message})`,
+            actionType: 'script' // AI가 아닌 스크립트로 표시
         };
     }
     

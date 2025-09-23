@@ -37,7 +37,7 @@ app.post('/api/start-simulation', (req, res) => {
             
             // 3단계: 저장
             world.save();
-        }, 5000); // 5초마다
+        }, 15000); // 15초마다
         
     console.log('▶ 시뮬레이션 시작됨');
     }

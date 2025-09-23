@@ -6,6 +6,12 @@ const OpenAI = require('openai');
 const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Claude API 설정 (Anthropic SDK 사용)
+const Anthropic = require('@anthropic-ai/sdk');
+const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+});
+
 // 간단한 sleep 함수
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -17,6 +23,14 @@ async function callLLM(prompt, provider = 'gemini') {
                 const model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
                 const result = await model.generateContent(prompt);
                 return result.response.text();
+            } else if (provider === 'claude') {
+            const completion = await anthropic.messages.create({
+                model: "claude-3-5-haiku-latest", // 테스트용 빠르고 저렴한 모델
+                // model: "claude-sonnet-4@20250514", // 나중에 높은 추론 능력이나 글이 필요할 때
+                max_tokens: 1000,
+                messages: [{ role: "user", content: prompt }],
+            });
+                return completion.content[0].text;
             } else { // gpt
                 const completion = await openai.chat.completions.create({
                     model: "gpt-4o-mini",

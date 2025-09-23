@@ -20,8 +20,22 @@ function setupRoutes(world) {
             // mainEvents 같은 추가적인 정보가 있다면 함께 보낼 수 있습니다.
         });
     });
-    
+        // LLM 설정 업데이트 API 추가
+    router.post('/api/update-llm-config', (req, res) => {
+        const { characterId, provider } = req.body;
+        
+        if (!world.llmConfigs) {
+            world.llmConfigs = {};
+        }
+        
+        world.llmConfigs[characterId] = { provider };
+        
+        console.log(`[LLM 설정 업데이트] ${characterId}: ${provider}`);
+        res.json({ success: true });
+    });
     return router;
 }
+
+
 
 module.exports = setupRoutes;

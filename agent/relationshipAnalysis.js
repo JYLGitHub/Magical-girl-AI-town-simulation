@@ -56,23 +56,48 @@ async function updateRelationshipDefinition(characterA, characterB, conversation
         const rawResponse = await callLLM(prompt, provider);
         const jsonMatch = rawResponse.match(/\{[\s\S]*\}/);
         
+        
+
         if (jsonMatch) {
-            const analysis = JSON.parse(jsonMatch[0]);
+            let jsonStr = jsonMatch[0];
             
+            // JSON 정리 - 흔한 오류들 수정
+            jsonStr = jsonStr
+                .replace(/'/g, '"')  // 작은따옴표를 큰따옴표로
+                .replace(/,\s*}/g, '}')  // 마지막 쉼표 제거
+                .replace(/,\s*]/g, ']')  // 배열 마지막 쉼표 제거
+                .replace(/(\w+):/g, '"$1":')  // 속성명에 따옴표 추가
+                .replace(/""(\w+)":/g, '"$1":')  // 중복 따옴표 제거
+                .replace(/"\s*:\s*"([^"]*[^\\])"\s*([,}])/g, '": "$1"$2'); // 값 정리
+
+        // 기본값 설정으로 안전성 확보
+            const safeAnalysis = {
+                relationshipType: analysis.relationshipType || "알아가는 중",
+                relationshipSummary: analysis.relationshipSummary || "관계 분석 중",
+                affectionChange: Number(analysis.affectionChange) || 0,
+                trustChange: Number(analysis.trustChange) || 0,
+                respectChange: Number(analysis.respectChange) || 0,
+                familiarityChange: Number(analysis.familiarityChange) || 0,
+                energyModifier: Number(analysis.energyModifier) || 0,
+                stressModifier: Number(analysis.stressModifier) || 0,
+                moodInfluence: analysis.moodInfluence || "중립",
+                memorableExperience: analysis.memorableExperience || ""
+            };
+                
             // 관계 업데이트 적용
-            currentRel.relationshipType = analysis.relationshipType;
-            currentRel.relationshipSummary = analysis.relationshipSummary;
+            currentRel.relationshipType = safeAnalysis.relationshipType;
+            currentRel.relationshipSummary = safeAnalysis.relationshipSummary;
             
             // 수치 변화 적용
-            currentRel.affection = Math.max(0, Math.min(100, currentRel.affection + (analysis.affectionChange || 0)));
-            currentRel.trust = Math.max(0, Math.min(100, currentRel.trust + (analysis.trustChange || 0)));
-            currentRel.respect = Math.max(0, Math.min(100, currentRel.respect + (analysis.respectChange || 0)));
-            currentRel.familiarity = Math.max(0, Math.min(100, currentRel.familiarity + (analysis.familiarityChange || 0)));
+            currentRel.affection = Math.max(0, Math.min(100, currentRel.affection + safeAnalysis.affectionChange));
+            currentRel.trust = Math.max(0, Math.min(100, currentRel.trust + safeAnalysis.trustChange));
+            currentRel.respect = Math.max(0, Math.min(100, currentRel.respect + safeAnalysis.respectChange));
+            currentRel.familiarity = Math.max(0, Math.min(100, currentRel.familiarity + safeAnalysis.familiarityChange));
             
             // 상호작용 효과 업데이트
-            currentRel.energyModifier = Math.max(-10, Math.min(10, analysis.energyModifier || 0));
-            currentRel.stressModifier = Math.max(-10, Math.min(10, analysis.stressModifier || 0));
-            currentRel.moodInfluence = analysis.moodInfluence || "중립";
+            currentRel.energyModifier = Math.max(-10, Math.min(10, safeAnalysis.energyModifier));
+            currentRel.stressModifier = Math.max(-10, Math.min(10, safeAnalysis.stressModifier));
+            currentRel.moodInfluence = safeAnalysis.moodInfluence;
             
             // 상호작용 기록 업데이트
             currentRel.interactionCount++;
@@ -80,24 +105,21 @@ async function updateRelationshipDefinition(characterA, characterB, conversation
             currentRel.lastInteraction = new Date().toISOString();
             
             // 기억할 만한 경험 저장
-            if (analysis.memorableExperience) {
+            if (safeAnalysis.memorableExperience) {
                 currentRel.sharedExperiences.push(analysis.memorableExperience);
                 if (currentRel.sharedExperiences.length > 10) {
                     currentRel.sharedExperiences = currentRel.sharedExperiences.slice(-10);
                 }
             }
-            
+        }
+        
             console.log(`[관계 분석 완료] ${characterA.name} → ${characterB.name}`);
             console.log(`  새로운 관계: "${currentRel.relationshipType}"`);
             
-            return analysis;
-        }
+            return safeAnalysis;
         
-        console.error(`[관계 분석 실패] ${characterA.name}: JSON 파싱 실패`);
-        return null;
-        
-    } catch (error) {
-        console.error(`[관계 분석 오류] ${characterA.name} → ${characterB.name}:`, error);
+    } catch (parseError) {
+        console.error(`[관계 분석 JSON 파싱 실패] ${characterA.name} → ${characterB.name}:`, parseError.message);
         return null;
     }
 }

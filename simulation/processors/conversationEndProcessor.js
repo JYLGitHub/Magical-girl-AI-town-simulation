@@ -7,12 +7,23 @@ const { endConversation } = require('../../agent/conversation.js');
 async function endConversations(world) {
     console.log("\n--- [3단계: 종료된 대화 처리] ---");
     
+    console.log(`[디버깅] 전체 활성 대화 수: ${world.activeConversations.length}`);
+    world.activeConversations.forEach((conv, index) => {
+        console.log(`[디버깅] 대화 ${index}: ID=${conv.id}, 활성=${conv.isActive}, 참여자수=${conv.participants.length}`);
+        console.log(`[디버깅] 참여자들: ${conv.participants.map(pId => world.characterDatabase[pId]?.name).join(', ')}`);
+    });
+
     // 종료될 대화들 찾기
     const conversationsToEnd = world.activeConversations.filter(conv => 
-        conv.isActive && conv.participants.length < 2
+        (!conv.isActive || conv.participants.length < 2) && conv.log && conv.log.length > 0
     );
     
     console.log(`[디버깅] 종료될 대화 개수: ${conversationsToEnd.length}`);
+    
+    // 각 종료될 대화의 정보 출력
+    conversationsToEnd.forEach((conv, index) => {
+        console.log(`[디버깅] 종료 처리할 대화 ${index}: ID=${conv.id}, 로그 수=${conv.log?.length || 0}`);
+    });
     
     for (const conv of conversationsToEnd) {
         await processEndedConversation(conv, world);

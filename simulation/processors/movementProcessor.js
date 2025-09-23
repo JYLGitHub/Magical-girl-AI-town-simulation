@@ -35,12 +35,13 @@ async function processMovementAction(action, world) {
             description += ` (${action.targetLocation}으로 이동)`;
         }
     }
-    
+    character.actionType = action.actionType || 'script';
     return {
         success: true,
         actionLog: { 
             charId: character.id, 
-            description: description 
+            description: description,
+            actionType: action.actionType || 'script'
         }
     };
 }

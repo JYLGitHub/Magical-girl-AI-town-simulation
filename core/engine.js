@@ -30,9 +30,23 @@ class World {
 
     async getAllCharacterActions() {
         const actions = [];
-        for (const character of Object.values(this.characterDatabase)) {
-            const action = await runAgent(character, this);
+        // 기존: 동시 처리 (3명이 한번에 LLM 호출)
+        // for (const character of Object.values(this.characterDatabase)) {
+        //     const action = await runAgent(character, this);
+        //     actions.push(action);
+        // }
+
+        // 수정: 순차 처리 (1명씩 차례대로)
+        const characters = Object.values(this.characterDatabase);
+        for (let i = 0; i < characters.length; i++) {
+            console.log(`[순차 처리] ${i+1}/${characters.length}: ${characters[i].name} 처리 중...`);
+            const action = await runAgent(characters[i], this);
             actions.push(action);
+            
+            // 각 캐릭터 처리 후 1초 대기 (추가 안전장치)
+            if (i < characters.length - 1) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
         }
         return actions;
     }

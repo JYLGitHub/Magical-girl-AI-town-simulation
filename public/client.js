@@ -342,17 +342,32 @@ function toggleCharacter(characterId) {
     }
 }
 
+// LLM 설정 변경 시 서버로 전송하는 함수
+async function updateLLMConfig(characterId, provider) {
+    try {
+        const response = await fetch('/api/update-llm-config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ characterId, provider })
+        });
+        
+        if (response.ok) {
+            console.log(`[LLM 설정 변경] ${characterId}: ${provider}`);
+        }
+    } catch (error) {
+        console.error('LLM 설정 전송 오류:', error);
+    }
+}
+
 function generateLLMConfigUI() {
     const container = document.getElementById('characterLLMGrid');
     if (!container) return;
     container.innerHTML = ''; 
+    
     Object.values(gameState.characters).forEach(character => {
         const selectWrapper = document.createElement('div');
-        // ⭐ 수정: div에 CSS 클래스를 추가하여 스타일 관리를 용이하게 합니다.
         selectWrapper.className = 'llm-config-item'; 
         
-        // ⭐ 수정: gemini를 제거하고 Gemini를 추가하며, Gemini를 기본 선택으로 설정합니다.
-        // UI도 더 명확하게 라벨과 select로 분리합니다.
         selectWrapper.innerHTML = `
             <label for="${character.id}LLM">${character.name}</label>
             <select id="${character.id}LLM">
@@ -360,7 +375,14 @@ function generateLLMConfigUI() {
                 <option value="gpt">GPT</option>
                 <option value="claude">Claude</option>
             </select>`;
+        
         container.appendChild(selectWrapper);
+        
+        // 이벤트 리스너 추가
+        const selectElement = selectWrapper.querySelector('select');
+        selectElement.addEventListener('change', (e) => {
+            updateLLMConfig(character.id, e.target.value);
+        });
     });
 }
 
